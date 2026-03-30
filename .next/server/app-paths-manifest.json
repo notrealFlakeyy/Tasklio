@@ -1,0 +1,19 @@
+{
+  "/(auth)/auth/callback/route": "app/(auth)/auth/callback/route.js",
+  "/(auth)/auth/sign-in/page": "app/(auth)/auth/sign-in/page.js",
+  "/(auth)/auth/sign-up/page": "app/(auth)/auth/sign-up/page.js",
+  "/(dashboard)/dashboard/availability/page": "app/(dashboard)/dashboard/availability/page.js",
+  "/(dashboard)/dashboard/bookings/page": "app/(dashboard)/dashboard/bookings/page.js",
+  "/(dashboard)/dashboard/customers/[customerId]/page": "app/(dashboard)/dashboard/customers/[customerId]/page.js",
+  "/(dashboard)/dashboard/customers/page": "app/(dashboard)/dashboard/customers/page.js",
+  "/(dashboard)/dashboard/page": "app/(dashboard)/dashboard/page.js",
+  "/(dashboard)/dashboard/services/page": "app/(dashboard)/dashboard/services/page.js",
+  "/(dashboard)/dashboard/settings/page": "app/(dashboard)/dashboard/settings/page.js",
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/public/bookings/route": "app/api/public/bookings/route.js",
+  "/api/public/organizations/[slug]/slots/route": "app/api/public/organizations/[slug]/slots/route.js",
+  "/api/stripe/webhook/route": "app/api/stripe/webhook/route.js",
+  "/book/[slug]/page": "app/book/[slug]/page.js",
+  "/page": "app/page.js"
+}

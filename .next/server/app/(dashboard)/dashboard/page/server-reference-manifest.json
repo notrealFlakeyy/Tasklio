@@ -1,0 +1,17 @@
+{
+  "node": {
+    "0004fdff951724aa97a15db2c6a9d58ab892749c69": {
+      "workers": {
+        "app/(dashboard)/dashboard/page": {
+          "moduleId": 61618,
+          "async": false,
+          "exportedName": "signOutAction",
+          "filename": "modules/auth/actions.ts"
+        }
+      },
+      "exportedName": "signOutAction",
+      "filename": "modules/auth/actions.ts"
+    }
+  },
+  "edge": {}
+}

@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-manrope);
+  --font-display: var(--font-fraunces);
+}
+
+:root {
+  --background: #f6efe7;
+  --color-surface: rgba(255, 251, 247, 0.92);
+  --color-surface-strong: #fff8f1;
+  --color-ink: #1e1c1a;
+  --color-muted: #6d635c;
+  --color-border: rgba(30, 28, 26, 0.1);
+  --color-brand: #b65c31;
+  --color-brand-strong: #8f451f;
+  --color-brand-soft: rgba(182, 92, 49, 0.14);
+  --color-success: #295f4e;
+  --color-danger: #a73b2f;
+  --color-ring: rgba(182, 92, 49, 0.22);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.9), transparent 28%),
+    radial-gradient(circle at top right, rgba(182, 92, 49, 0.14), transparent 24%),
+    radial-gradient(circle at bottom left, rgba(41, 95, 78, 0.1), transparent 24%),
+    linear-gradient(180deg, #fdf8f2, var(--background));
+  color: var(--color-ink);
+  font-family: var(--font-manrope), sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-fraunces), serif;
+}
+
+::selection {
+  background: var(--color-brand-soft);
+}
+
+.app-shell {
+  position: relative;
+}
+
+.app-shell::before {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(30, 28, 26, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 28, 26, 0.03) 1px, transparent 1px);
+  background-size: 64px 64px;
+  content: "";
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.75), transparent 92%);
+}
