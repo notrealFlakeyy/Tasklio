@@ -12,7 +12,7 @@
       "exportedName": "signOutAction",
       "filename": "modules/auth/actions.ts"
     },
-    "40298c6482e78c749e22bd422f2ccf4b7e4570da78": {
+    "60298c6482e78c749e22bd422f2ccf4b7e4570da78": {
       "workers": {
         "app/(dashboard)/dashboard/settings/page": {
           "moduleId": 38978,

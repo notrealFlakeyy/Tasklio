@@ -1,7 +1,8 @@
 import Link from "next/link";
 
-import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/empty-state";
+import { MetricCard } from "@/components/ui/metric-card";
 import { requireDashboardContext } from "@/lib/auth";
 import { formatUtcInTimeZone } from "@/lib/date-utils";
 import { formatCurrency } from "@/lib/utils";
@@ -14,7 +15,7 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-6">
       <section className="rounded-[32px] border border-[color:var(--color-border)] bg-[var(--color-surface)] p-8">
-        <Badge>Business operating system</Badge>
+        <p className="editorial-kicker">Business operating system</p>
         <h1 className="mt-4 text-4xl font-semibold">Client, revenue, and booking control</h1>
         <p className="mt-3 max-w-3xl text-[var(--color-muted)]">
           This dashboard now treats bookings as part of the customer relationship and
@@ -24,30 +25,36 @@ export default async function DashboardPage() {
       </section>
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        <Card>
-          <CardTitle>{formatCurrency(snapshot.bookedRevenueThisMonthAmount)}</CardTitle>
-          <CardDescription>Booked revenue this month</CardDescription>
-        </Card>
-        <Card>
-          <CardTitle>{snapshot.totalCustomers}</CardTitle>
-          <CardDescription>Total customers</CardDescription>
-        </Card>
-        <Card>
-          <CardTitle>{snapshot.newCustomersThisMonth}</CardTitle>
-          <CardDescription>New customers this month</CardDescription>
-        </Card>
-        <Card>
-          <CardTitle>{snapshot.upcomingBookings}</CardTitle>
-          <CardDescription>Upcoming bookings</CardDescription>
-        </Card>
-        <Card>
-          <CardTitle>{snapshot.pendingBookings}</CardTitle>
-          <CardDescription>Pending confirmations</CardDescription>
-        </Card>
-        <Card>
-          <CardTitle>{formatCurrency(snapshot.averageBookingValueAmount)}</CardTitle>
-          <CardDescription>Average booking value</CardDescription>
-        </Card>
+        <MetricCard
+          description="Booked revenue this month"
+          label="Monthly revenue"
+          value={formatCurrency(snapshot.bookedRevenueThisMonthAmount)}
+        />
+        <MetricCard
+          description="Total customers"
+          label="Customer base"
+          value={snapshot.totalCustomers}
+        />
+        <MetricCard
+          description="New customers this month"
+          label="New relationships"
+          value={snapshot.newCustomersThisMonth}
+        />
+        <MetricCard
+          description="Upcoming bookings"
+          label="Upcoming"
+          value={snapshot.upcomingBookings}
+        />
+        <MetricCard
+          description="Pending confirmations"
+          label="Needs review"
+          value={snapshot.pendingBookings}
+        />
+        <MetricCard
+          description="Average booking value"
+          label="Average value"
+          value={formatCurrency(snapshot.averageBookingValueAmount)}
+        />
       </section>
 
       <div className="grid gap-6 xl:grid-cols-[1.1fr,0.9fr]">
@@ -83,9 +90,10 @@ export default async function DashboardPage() {
                 </div>
               ))
             ) : (
-              <p className="text-sm text-[var(--color-muted)]">
-                Revenue metrics will appear once bookings start coming in.
-              </p>
+              <EmptyState
+                description="Revenue metrics will appear once bookings start coming in."
+                title="No service revenue yet"
+              />
             )}
           </div>
         </Card>
@@ -116,9 +124,10 @@ export default async function DashboardPage() {
                 </div>
               ))
             ) : (
-              <p className="text-sm text-[var(--color-muted)]">
-                Customer status data will appear as soon as records exist.
-              </p>
+              <EmptyState
+                description="Customer status data will appear as soon as records exist."
+                title="No customer segments yet"
+              />
             )}
           </div>
         </Card>
@@ -153,10 +162,10 @@ export default async function DashboardPage() {
               </div>
             ))
           ) : (
-            <p className="text-sm text-[var(--color-muted)]">
-              No upcoming bookings yet. Publish services and availability, then share
-              your public URL.
-            </p>
+            <EmptyState
+              description="Publish services and availability, then share your public URL."
+              title="No upcoming bookings yet"
+            />
           )}
         </div>
       </Card>

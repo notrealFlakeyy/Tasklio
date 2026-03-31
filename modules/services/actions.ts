@@ -3,6 +3,12 @@
 import { revalidatePath } from "next/cache";
 
 import { requireDashboardContext } from "@/lib/auth";
+import {
+  createErrorActionState,
+  createSuccessActionState,
+  getFieldErrorsFromZodError,
+  type FormActionState,
+} from "@/lib/form-action-state";
 import { createClient } from "@/lib/supabase/server";
 import {
   deleteServiceSchema,
@@ -10,7 +16,10 @@ import {
 } from "@/lib/validation/services";
 import { formDataValue, nullableString } from "@/lib/utils";
 
-export async function upsertServiceAction(formData: FormData) {
+export async function upsertServiceAction(
+  _state: FormActionState,
+  formData: FormData,
+) {
   const { organization } = await requireDashboardContext();
   const supabase = await createClient();
 
@@ -28,7 +37,10 @@ export async function upsertServiceAction(formData: FormData) {
   const parsed = serviceFormSchema.safeParse(candidate);
 
   if (!parsed.success) {
-    throw new Error(parsed.error.issues[0]?.message ?? "Invalid service.");
+    return createErrorActionState(
+      parsed.error.issues[0]?.message ?? "Invalid service.",
+      getFieldErrorsFromZodError(parsed.error),
+    );
   }
 
   const payload = {
@@ -53,14 +65,21 @@ export async function upsertServiceAction(formData: FormData) {
   const { error } = await query;
 
   if (error) {
-    throw new Error(error.message);
+    return createErrorActionState(error.message);
   }
 
   revalidatePath("/dashboard/services");
   revalidatePath(`/book/${organization.slug}`);
+
+  return createSuccessActionState(
+    parsed.data.id ? "Service updated." : "Service created.",
+  );
 }
 
-export async function deleteServiceAction(formData: FormData) {
+export async function deleteServiceAction(
+  _state: FormActionState,
+  formData: FormData,
+) {
   const { organization } = await requireDashboardContext();
   const supabase = await createClient();
   const parsed = deleteServiceSchema.safeParse({
@@ -68,7 +87,7 @@ export async function deleteServiceAction(formData: FormData) {
   });
 
   if (!parsed.success) {
-    throw new Error("Invalid service id.");
+    return createErrorActionState("Invalid service id.");
   }
 
   const { error } = await supabase
@@ -78,9 +97,11 @@ export async function deleteServiceAction(formData: FormData) {
     .eq("organization_id", organization.id);
 
   if (error) {
-    throw new Error(error.message);
+    return createErrorActionState(error.message);
   }
 
   revalidatePath("/dashboard/services");
   revalidatePath(`/book/${organization.slug}`);
+
+  return createSuccessActionState("Service deleted.");
 }

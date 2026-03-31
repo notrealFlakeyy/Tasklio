@@ -1,9 +1,12 @@
 import { notFound } from "next/navigation";
+import { Clock3, Sparkles, WalletCards } from "lucide-react";
 
 import { PublicBookingWidget } from "@/components/forms/public-booking-widget";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { Reveal } from "@/components/ui/reveal";
+import { SpotlightPanel } from "@/components/ui/spotlight-panel";
 import { todayInTimeZone } from "@/lib/date-utils";
+import { formatCurrency } from "@/lib/utils";
 import {
   getPublicOrganizationBySlug,
   listPublicServices,
@@ -22,16 +25,53 @@ export default async function PublicBookingPage({
   }
 
   const services = await listPublicServices(organization.id);
+  const startingPrice = services.length
+    ? Math.min(...services.map((service) => service.price_amount))
+    : 0;
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-10 lg:px-10">
-      <section className="mb-8 rounded-[32px] border border-[color:var(--color-border)] bg-[var(--color-surface)] p-8">
-        <Badge>Public booking page</Badge>
-        <h1 className="mt-4 text-5xl font-semibold">{organization.name}</h1>
-        <p className="mt-3 max-w-2xl text-[var(--color-muted)]">
-          This route is public, but slot generation and booking writes still happen
-          on trusted server boundaries.
-        </p>
+    <main className="mx-auto max-w-7xl px-6 py-8 lg:px-10">
+      <section className="relative overflow-hidden py-8 lg:py-12">
+        <div className="ambient-orb soft left-[-2rem] top-12 h-36 w-36 animate-drift" />
+        <div className="ambient-orb alt right-[-1rem] top-20 h-44 w-44 animate-pulse-glow" />
+
+        <div className="grid gap-8 lg:grid-cols-[0.92fr,1.08fr] lg:items-end">
+          <Reveal className="space-y-5">
+            <p className="editorial-kicker">Book with confidence</p>
+            <h1 className="text-balance text-5xl leading-[0.95] font-semibold md:text-6xl">
+              A calmer way to book with {organization.name}.
+            </h1>
+            <p className="max-w-2xl text-lg leading-8 text-[var(--color-muted)]">
+              Choose a service, see real availability in {organization.timezone},
+              and confirm everything through a booking flow that feels considered
+              instead of transactional.
+            </p>
+          </Reveal>
+
+          <Reveal delay={120}>
+            <SpotlightPanel className="p-6 md:p-7">
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="rounded-[24px] border border-[color:var(--color-border)] bg-white/80 p-4">
+                  <Clock3 className="size-5 text-[var(--color-brand)]" />
+                  <p className="mt-4 text-sm text-[var(--color-muted)]">Timezone-aware</p>
+                  <p className="mt-1 font-semibold">{organization.timezone}</p>
+                </div>
+                <div className="rounded-[24px] border border-[color:var(--color-border)] bg-white/80 p-4">
+                  <WalletCards className="size-5 text-[var(--color-brand)]" />
+                  <p className="mt-4 text-sm text-[var(--color-muted)]">Starting from</p>
+                  <p className="mt-1 font-semibold">
+                    {services.length ? formatCurrency(startingPrice) : "Unavailable"}
+                  </p>
+                </div>
+                <div className="rounded-[24px] border border-[color:var(--color-border)] bg-white/80 p-4">
+                  <Sparkles className="size-5 text-[var(--color-brand)]" />
+                  <p className="mt-4 text-sm text-[var(--color-muted)]">Experience</p>
+                  <p className="mt-1 font-semibold">Warm, responsive, and clear</p>
+                </div>
+              </div>
+            </SpotlightPanel>
+          </Reveal>
+        </div>
       </section>
 
       {services.length ? (
@@ -46,7 +86,7 @@ export default async function PublicBookingPage({
         <Card>
           <CardTitle>No active services</CardTitle>
           <CardDescription>
-            The owner has not published any active services yet.
+            This business has not published any active services yet.
           </CardDescription>
         </Card>
       )}

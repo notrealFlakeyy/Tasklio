@@ -12,7 +12,7 @@
       "exportedName": "signOutAction",
       "filename": "modules/auth/actions.ts"
     },
-    "40104309f862504698d23b6cc07b0154ef9d5275ab": {
+    "60104309f862504698d23b6cc07b0154ef9d5275ab": {
       "workers": {
         "app/(dashboard)/dashboard/bookings/page": {
           "moduleId": 93292,
@@ -24,7 +24,7 @@
       "exportedName": "cancelBookingAction",
       "filename": "modules/bookings/actions.ts"
     },
-    "40856915589c6e1647a623479633cb220ee5f579a0": {
+    "60856915589c6e1647a623479633cb220ee5f579a0": {
       "workers": {
         "app/(dashboard)/dashboard/bookings/page": {
           "moduleId": 93292,
@@ -36,7 +36,7 @@
       "exportedName": "updateBookingNotesAction",
       "filename": "modules/bookings/actions.ts"
     },
-    "408a515bb36d13978fc70805270f250a3d7e4b49c8": {
+    "608a515bb36d13978fc70805270f250a3d7e4b49c8": {
       "workers": {
         "app/(dashboard)/dashboard/bookings/page": {
           "moduleId": 93292,

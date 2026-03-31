@@ -12,7 +12,7 @@
       "exportedName": "signOutAction",
       "filename": "modules/auth/actions.ts"
     },
-    "4014bf6667d0b73d14cc5d526ee50f1991ec300741": {
+    "6014bf6667d0b73d14cc5d526ee50f1991ec300741": {
       "workers": {
         "app/(dashboard)/dashboard/availability/page": {
           "moduleId": 64216,
@@ -24,7 +24,7 @@
       "exportedName": "addBlockedDateAction",
       "filename": "modules/availability/actions.ts"
     },
-    "4045ec04704f70c694f8b81e7632207278c2d975cd": {
+    "6045ec04704f70c694f8b81e7632207278c2d975cd": {
       "workers": {
         "app/(dashboard)/dashboard/availability/page": {
           "moduleId": 64216,
@@ -36,7 +36,7 @@
       "exportedName": "addTimeOffAction",
       "filename": "modules/availability/actions.ts"
     },
-    "40a4175be77e7a6f2ed80b1c0157f4062b1bf8d4cb": {
+    "60a4175be77e7a6f2ed80b1c0157f4062b1bf8d4cb": {
       "workers": {
         "app/(dashboard)/dashboard/availability/page": {
           "moduleId": 64216,
@@ -48,7 +48,7 @@
       "exportedName": "saveWeeklyAvailabilityAction",
       "filename": "modules/availability/actions.ts"
     },
-    "40a83d15a2eec9bc352bfb405a665ce8d90cb8f7dc": {
+    "60a83d15a2eec9bc352bfb405a665ce8d90cb8f7dc": {
       "workers": {
         "app/(dashboard)/dashboard/availability/page": {
           "moduleId": 64216,
@@ -60,7 +60,7 @@
       "exportedName": "removeBlockedDateAction",
       "filename": "modules/availability/actions.ts"
     },
-    "40dedaa9a69ae61da164118e42006110fa2ff6bcfb": {
+    "60dedaa9a69ae61da164118e42006110fa2ff6bcfb": {
       "workers": {
         "app/(dashboard)/dashboard/availability/page": {
           "moduleId": 64216,

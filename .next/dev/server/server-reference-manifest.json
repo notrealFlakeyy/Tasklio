@@ -1,5 +1,30 @@
 {
-  "node": {},
+  "node": {
+    "0023fb771ce23d21482371755c88c423e72ccb8b03": {
+      "workers": {
+        "app/(dashboard)/dashboard/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/dashboard/page/actions.js { ACTIONS_MODULE0 => \"[project]/modules/auth/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "signOutAction",
+          "filename": "modules/auth/actions.ts"
+        }
+      },
+      "filename": "modules/auth/actions.ts",
+      "exportedName": "signOutAction"
+    },
+    "602a03fefaa1b8fe374433c0e597632aaf0a8ddc8b": {
+      "workers": {
+        "app/(auth)/auth/sign-in/page": {
+          "moduleId": "[project]/.next-internal/server/app/(auth)/auth/sign-in/page/actions.js { ACTIONS_MODULE0 => \"[project]/modules/auth/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "signInAction",
+          "filename": "modules/auth/actions.ts"
+        }
+      },
+      "filename": "modules/auth/actions.ts",
+      "exportedName": "signInAction"
+    }
+  },
   "edge": {},
   "encryptionKey": "zvIVUWARvs68LDDAbPbAaH5GTBI3BJM+EPj4NkI0KqE="
 }

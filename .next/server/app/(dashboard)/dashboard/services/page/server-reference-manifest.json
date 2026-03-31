@@ -12,7 +12,7 @@
       "exportedName": "signOutAction",
       "filename": "modules/auth/actions.ts"
     },
-    "4028d9c8270b7ca7da5a14a036142bb36ac3918183": {
+    "6028d9c8270b7ca7da5a14a036142bb36ac3918183": {
       "workers": {
         "app/(dashboard)/dashboard/services/page": {
           "moduleId": 6212,
@@ -24,7 +24,7 @@
       "exportedName": "upsertServiceAction",
       "filename": "modules/services/actions.ts"
     },
-    "406812b77b63e7b2a5c1fc0fb3a9c0b7262b1dfa69": {
+    "606812b77b63e7b2a5c1fc0fb3a9c0b7262b1dfa69": {
       "workers": {
         "app/(dashboard)/dashboard/services/page": {
           "moduleId": 6212,

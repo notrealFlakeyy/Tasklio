@@ -72,7 +72,7 @@
       "filename": "modules/auth/actions.ts",
       "exportedName": "signOutAction"
     },
-    "4014bf6667d0b73d14cc5d526ee50f1991ec300741": {
+    "6014bf6667d0b73d14cc5d526ee50f1991ec300741": {
       "workers": {
         "app/(dashboard)/dashboard/availability/page": {
           "moduleId": 64216,
@@ -84,7 +84,7 @@
       "filename": "modules/availability/actions.ts",
       "exportedName": "addBlockedDateAction"
     },
-    "4045ec04704f70c694f8b81e7632207278c2d975cd": {
+    "6045ec04704f70c694f8b81e7632207278c2d975cd": {
       "workers": {
         "app/(dashboard)/dashboard/availability/page": {
           "moduleId": 64216,
@@ -96,7 +96,7 @@
       "filename": "modules/availability/actions.ts",
       "exportedName": "addTimeOffAction"
     },
-    "40a4175be77e7a6f2ed80b1c0157f4062b1bf8d4cb": {
+    "60a4175be77e7a6f2ed80b1c0157f4062b1bf8d4cb": {
       "workers": {
         "app/(dashboard)/dashboard/availability/page": {
           "moduleId": 64216,
@@ -108,7 +108,7 @@
       "filename": "modules/availability/actions.ts",
       "exportedName": "saveWeeklyAvailabilityAction"
     },
-    "40a83d15a2eec9bc352bfb405a665ce8d90cb8f7dc": {
+    "60a83d15a2eec9bc352bfb405a665ce8d90cb8f7dc": {
       "workers": {
         "app/(dashboard)/dashboard/availability/page": {
           "moduleId": 64216,
@@ -120,7 +120,7 @@
       "filename": "modules/availability/actions.ts",
       "exportedName": "removeBlockedDateAction"
     },
-    "40dedaa9a69ae61da164118e42006110fa2ff6bcfb": {
+    "60dedaa9a69ae61da164118e42006110fa2ff6bcfb": {
       "workers": {
         "app/(dashboard)/dashboard/availability/page": {
           "moduleId": 64216,
@@ -132,7 +132,7 @@
       "filename": "modules/availability/actions.ts",
       "exportedName": "removeTimeOffAction"
     },
-    "40104309f862504698d23b6cc07b0154ef9d5275ab": {
+    "60104309f862504698d23b6cc07b0154ef9d5275ab": {
       "workers": {
         "app/(dashboard)/dashboard/bookings/page": {
           "moduleId": 93292,
@@ -144,7 +144,7 @@
       "filename": "modules/bookings/actions.ts",
       "exportedName": "cancelBookingAction"
     },
-    "40856915589c6e1647a623479633cb220ee5f579a0": {
+    "60856915589c6e1647a623479633cb220ee5f579a0": {
       "workers": {
         "app/(dashboard)/dashboard/bookings/page": {
           "moduleId": 93292,
@@ -156,7 +156,7 @@
       "filename": "modules/bookings/actions.ts",
       "exportedName": "updateBookingNotesAction"
     },
-    "408a515bb36d13978fc70805270f250a3d7e4b49c8": {
+    "608a515bb36d13978fc70805270f250a3d7e4b49c8": {
       "workers": {
         "app/(dashboard)/dashboard/bookings/page": {
           "moduleId": 93292,
@@ -168,7 +168,7 @@
       "filename": "modules/bookings/actions.ts",
       "exportedName": "confirmBookingAction"
     },
-    "40b1ceacbdcdac63ca5ffeb2e9424351bcc465835a": {
+    "60b1ceacbdcdac63ca5ffeb2e9424351bcc465835a": {
       "workers": {
         "app/(dashboard)/dashboard/customers/[customerId]/page": {
           "moduleId": 94535,
@@ -180,7 +180,7 @@
       "filename": "modules/customers/actions.ts",
       "exportedName": "updateCustomerProfileAction"
     },
-    "4028d9c8270b7ca7da5a14a036142bb36ac3918183": {
+    "6028d9c8270b7ca7da5a14a036142bb36ac3918183": {
       "workers": {
         "app/(dashboard)/dashboard/services/page": {
           "moduleId": 6212,
@@ -192,7 +192,7 @@
       "filename": "modules/services/actions.ts",
       "exportedName": "upsertServiceAction"
     },
-    "406812b77b63e7b2a5c1fc0fb3a9c0b7262b1dfa69": {
+    "606812b77b63e7b2a5c1fc0fb3a9c0b7262b1dfa69": {
       "workers": {
         "app/(dashboard)/dashboard/services/page": {
           "moduleId": 6212,
@@ -204,7 +204,7 @@
       "filename": "modules/services/actions.ts",
       "exportedName": "deleteServiceAction"
     },
-    "40298c6482e78c749e22bd422f2ccf4b7e4570da78": {
+    "60298c6482e78c749e22bd422f2ccf4b7e4570da78": {
       "workers": {
         "app/(dashboard)/dashboard/settings/page": {
           "moduleId": 38978,

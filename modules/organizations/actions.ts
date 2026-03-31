@@ -3,11 +3,20 @@
 import { revalidatePath } from "next/cache";
 
 import { requireDashboardContext } from "@/lib/auth";
+import {
+  createErrorActionState,
+  createSuccessActionState,
+  getFieldErrorsFromZodError,
+  type FormActionState,
+} from "@/lib/form-action-state";
 import { createClient } from "@/lib/supabase/server";
 import { organizationSettingsSchema } from "@/lib/validation/organizations";
 import { formDataValue, nullableString } from "@/lib/utils";
 
-export async function updateOrganizationSettingsAction(formData: FormData) {
+export async function updateOrganizationSettingsAction(
+  _state: FormActionState,
+  formData: FormData,
+) {
   const { organization } = await requireDashboardContext();
   const supabase = await createClient();
 
@@ -24,7 +33,10 @@ export async function updateOrganizationSettingsAction(formData: FormData) {
   const parsed = organizationSettingsSchema.safeParse(candidate);
 
   if (!parsed.success) {
-    throw new Error(parsed.error.issues[0]?.message ?? "Invalid organization settings.");
+    return createErrorActionState(
+      parsed.error.issues[0]?.message ?? "Invalid organization settings.",
+      getFieldErrorsFromZodError(parsed.error),
+    );
   }
 
   const { error } = await supabase
@@ -41,10 +53,13 @@ export async function updateOrganizationSettingsAction(formData: FormData) {
     .eq("id", organization.id);
 
   if (error) {
-    throw new Error(error.message);
+    return createErrorActionState(error.message);
   }
 
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/settings");
   revalidatePath(`/book/${organization.slug}`);
+  revalidatePath(`/book/${parsed.data.slug}`);
+
+  return createSuccessActionState("Organization settings saved.");
 }

@@ -93,9 +93,9 @@ const envSchema = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2
 });
 function getServerEnv() {
     return envSchema.parse({
-        NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
-        NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
-        NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+        NEXT_PUBLIC_APP_URL: ("TURBOPACK compile-time value", "http://localhost:3000") ?? "http://localhost:3000",
+        NEXT_PUBLIC_SUPABASE_URL: ("TURBOPACK compile-time value", "https://msonofjvgbpfdvqavvjr.supabase.co"),
+        NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ("TURBOPACK compile-time value", "sb_publishable_7o9rmOLctgMfYTrERAixtw_tccp94cn"),
         SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
         STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
         STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,

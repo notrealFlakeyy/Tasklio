@@ -1,2 +1,5 @@
-/.env.example
+.env.example
 node_modules
+.next
+dist
+.env.local

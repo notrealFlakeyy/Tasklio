@@ -1,14 +1,16 @@
 "use client";
 
 import { startTransition, useEffect, useEffectEvent, useState } from "react";
+import { CalendarDays, CheckCircle2, Clock3, PhoneCall } from "lucide-react";
 
+import type { Tables } from "@/lib/database.types";
+import { formatCurrency } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Card, CardDescription, CardTitle } from "@/components/ui/card";
+import { CardDescription, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SpotlightPanel } from "@/components/ui/spotlight-panel";
 import { Textarea } from "@/components/ui/textarea";
-import { formatCurrency } from "@/lib/utils";
-import type { Tables } from "@/lib/database.types";
 
 type ServiceOption = Pick<
   Tables<"services">,
@@ -100,7 +102,7 @@ export function PublicBookingWidget({
     setSuccess(null);
 
     if (!selectedSlot) {
-      setError("Please choose a time.");
+      setError("Please choose a time before submitting.");
       return;
     }
 
@@ -130,7 +132,7 @@ export function PublicBookingWidget({
         throw new Error(payload.message ?? "Booking failed.");
       }
 
-      setSuccess("Booking created. Check the dashboard to confirm or cancel it.");
+      setSuccess(`Your booking request with ${organizationName} has been received.`);
       event.currentTarget.reset();
       setSelectedSlot("");
       await loadSlots();
@@ -145,102 +147,139 @@ export function PublicBookingWidget({
 
   if (!services.length) {
     return (
-      <Card>
+      <SpotlightPanel className="p-8">
         <CardTitle>No services published yet</CardTitle>
         <CardDescription>
           This business has not activated any bookable services.
         </CardDescription>
-      </Card>
+      </SpotlightPanel>
     );
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[0.95fr,1.05fr]">
-      <Card className="space-y-5">
-        <div>
-          <CardTitle>{organizationName}</CardTitle>
-          <CardDescription>
-            Pick a service and a time in {timezone}. All booking timestamps are
-            stored in UTC behind the scenes.
-          </CardDescription>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="service">Service</Label>
-          <select
-            className="h-11 w-full rounded-2xl border border-[color:var(--color-border)] bg-white px-4 text-sm text-[var(--color-ink)] outline-none focus:border-[var(--color-brand)]"
-            id="service"
-            onChange={(event) => setSelectedServiceId(event.target.value)}
-            value={selectedServiceId}
-          >
-            {services.map((service) => (
-              <option key={service.id} value={service.id}>
-                {service.name} · {service.duration_minutes} min ·{" "}
-                {formatCurrency(service.price_amount, service.currency)}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="date">Date</Label>
-          <Input
-            id="date"
-            min={defaultDate}
-            onChange={(event) => setSelectedDate(event.target.value)}
-            type="date"
-            value={selectedDate}
-          />
-        </div>
-
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <Label>Available times</Label>
-            {selectedService ? (
-              <span className="text-xs text-[var(--color-muted)]">
-                Includes {selectedService.buffer_minutes} min buffer
-              </span>
-            ) : null}
-          </div>
-
-          {isLoadingSlots ? (
-            <p className="text-sm text-[var(--color-muted)]">Loading slots...</p>
-          ) : slots.length ? (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {slots.map((slot) => (
-                <button
-                  className={`rounded-2xl border px-4 py-3 text-sm font-semibold transition ${
-                    selectedSlot === slot.startsAt
-                      ? "border-[var(--color-brand)] bg-[var(--color-brand)] text-white"
-                      : "border-[color:var(--color-border)] bg-white text-[var(--color-ink)] hover:border-[var(--color-brand)]"
-                  }`}
-                  key={slot.startsAt}
-                  onClick={() => setSelectedSlot(slot.startsAt)}
-                  type="button"
-                >
-                  {slot.label}
-                </button>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-[var(--color-muted)]">
-              No bookable slots match the current availability rules.
-            </p>
-          )}
-        </div>
-      </Card>
-
-      <Card>
-        <form className="space-y-5" onSubmit={handleSubmit}>
+    <section className="grid gap-6 pb-10 lg:grid-cols-[0.92fr,1.08fr]">
+      <SpotlightPanel className="p-6 md:p-7">
+        <div className="space-y-6">
           <div>
-            <CardTitle>Complete your booking</CardTitle>
-            <CardDescription>
-              This submits through a protected server handler. Final conflict
-              prevention still happens in Postgres.
+            <p className="editorial-kicker">Choose the visit</p>
+            <CardTitle className="mt-3 text-3xl md:text-4xl">{organizationName}</CardTitle>
+            <CardDescription className="mt-3 max-w-xl text-base">
+              Pick the service that fits, choose a date, and reserve from the live
+              availability grid. Everything is shown in {timezone}.
             </CardDescription>
           </div>
 
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className="space-y-3">
+            {services.map((service) => {
+              const isActive = selectedServiceId === service.id;
+
+              return (
+                <button
+                  className={`w-full rounded-[24px] border p-5 text-left transition duration-300 ${
+                    isActive
+                      ? "border-[color:rgba(68,55,48,0.16)] bg-[var(--color-brand-strong)] text-white shadow-[0_20px_50px_rgba(68,55,48,0.18)]"
+                      : "border-[color:var(--color-border)] bg-white/82 text-[var(--color-ink)] hover:-translate-y-0.5 hover:border-[color:var(--color-border-strong)]"
+                  }`}
+                  key={service.id}
+                  onClick={() => setSelectedServiceId(service.id)}
+                  type="button"
+                >
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <p className="text-lg font-semibold">{service.name}</p>
+                      <p
+                        className={`mt-2 text-sm ${
+                          isActive ? "text-white/76" : "text-[var(--color-muted)]"
+                        }`}
+                      >
+                        {service.duration_minutes} min session with{" "}
+                        {service.buffer_minutes} min buffer
+                      </p>
+                    </div>
+                    <p className="text-sm font-semibold">
+                      {formatCurrency(service.price_amount, service.currency)}
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-[24px] border border-[color:var(--color-border)] bg-white/80 p-5">
+              <div className="flex items-center gap-3">
+                <CalendarDays className="size-5 text-[var(--color-brand)]" />
+                <div>
+                  <p className="text-sm font-semibold">Pick your date</p>
+                  <p className="text-sm text-[var(--color-muted)]">
+                    Real slots are generated from weekly rules plus time off.
+                  </p>
+                </div>
+              </div>
+              <Input
+                className="mt-4"
+                id="date"
+                min={defaultDate}
+                onChange={(event) => setSelectedDate(event.target.value)}
+                type="date"
+                value={selectedDate}
+              />
+            </div>
+
+            <div className="rounded-[24px] border border-[color:var(--color-border)] bg-white/80 p-5">
+              <div className="flex items-center gap-3">
+                <Clock3 className="size-5 text-[var(--color-brand)]" />
+                <div>
+                  <p className="text-sm font-semibold">Select a time</p>
+                  <p className="text-sm text-[var(--color-muted)]">
+                    Time slots stay aligned to business timezone rules.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-4">
+                {isLoadingSlots ? (
+                  <p className="text-sm text-[var(--color-muted)]">Loading live slots...</p>
+                ) : slots.length ? (
+                  <div className="grid grid-cols-2 gap-3">
+                    {slots.map((slot) => (
+                      <button
+                        className={`rounded-[18px] border px-4 py-3 text-sm font-semibold transition ${
+                          selectedSlot === slot.startsAt
+                            ? "border-[color:rgba(68,55,48,0.16)] bg-[var(--background-soft)] text-[var(--color-brand-strong)] shadow-[var(--shadow-soft)]"
+                            : "border-[color:var(--color-border)] bg-white text-[var(--color-ink)] hover:-translate-y-0.5 hover:border-[color:var(--color-border-strong)]"
+                        }`}
+                        key={slot.startsAt}
+                        onClick={() => setSelectedSlot(slot.startsAt)}
+                        type="button"
+                      >
+                        {slot.label}
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm leading-7 text-[var(--color-muted)]">
+                    No times are available for the current selection.
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </SpotlightPanel>
+
+      <SpotlightPanel className="p-6 md:p-7">
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <div>
+            <p className="editorial-kicker">Confirm the details</p>
+            <CardTitle className="mt-3 text-3xl md:text-4xl">Complete your booking</CardTitle>
+            <CardDescription className="mt-3 max-w-xl text-base">
+              Clean form fields, live feedback, and server-side validation keep the
+              flow elegant without sacrificing reliability.
+            </CardDescription>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="customerName">Name</Label>
               <Input id="customerName" name="customerName" required />
@@ -261,20 +300,48 @@ export function PublicBookingWidget({
             <Textarea
               id="customerNotes"
               name="customerNotes"
-              placeholder="Anything the provider should know before the appointment?"
+              placeholder="Anything useful to know before the appointment?"
             />
           </div>
 
-          {error ? <p className="text-sm text-[var(--color-danger)]">{error}</p> : null}
-          {success ? (
-            <p className="text-sm text-[var(--color-success)]">{success}</p>
-          ) : null}
+          <div className="rounded-[24px] border border-[color:var(--color-border)] bg-white/78 p-5">
+            <div className="flex items-start gap-3">
+              <CheckCircle2 className="mt-0.5 size-5 text-[var(--color-brand)]" />
+              <div>
+                <p className="font-semibold text-[var(--color-brand-strong)]">
+                  Selected experience
+                </p>
+                <p className="mt-2 text-sm leading-7 text-[var(--color-muted)]">
+                  {selectedService
+                    ? `${selectedService.name} · ${selectedService.duration_minutes} min · ${formatCurrency(
+                        selectedService.price_amount,
+                        selectedService.currency,
+                      )}`
+                    : "Choose a service to continue."}
+                </p>
+                <p className="mt-1 text-sm leading-7 text-[var(--color-muted)]">
+                  {selectedSlot
+                    ? `Chosen time: ${slots.find((slot) => slot.startsAt === selectedSlot)?.label ?? ""}`
+                    : "No time selected yet."}
+                </p>
+              </div>
+            </div>
+          </div>
 
-          <Button disabled={isSubmitting || !selectedSlot} type="submit">
-            {isSubmitting ? "Booking..." : "Book selected time"}
-          </Button>
+          {error ? <p className="text-sm text-[var(--color-danger)]">{error}</p> : null}
+          {success ? <p className="text-sm text-[var(--color-success)]">{success}</p> : null}
+
+          <div className="flex flex-wrap items-center gap-3">
+            <Button disabled={isSubmitting || !selectedSlot} size="lg" type="submit">
+              {isSubmitting ? "Booking..." : "Request this appointment"}
+            </Button>
+            <div className="inline-flex items-center gap-2 text-sm text-[var(--color-muted)]">
+              <PhoneCall className="size-4 text-[var(--color-brand)]" />
+              Prefer phone follow-up? Add it above and the business can call you.
+            </div>
+          </div>
         </form>
-      </Card>
-    </div>
+      </SpotlightPanel>
+    </section>
   );
 }

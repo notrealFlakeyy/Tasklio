@@ -3,6 +3,12 @@
 import { revalidatePath } from "next/cache";
 
 import { requireDashboardContext } from "@/lib/auth";
+import {
+  createErrorActionState,
+  createSuccessActionState,
+  getFieldErrorsFromZodError,
+  type FormActionState,
+} from "@/lib/form-action-state";
 import { createClient } from "@/lib/supabase/server";
 import { updateCustomerSchema } from "@/lib/validation/customers";
 import {
@@ -11,7 +17,10 @@ import {
   parseTagInput,
 } from "@/lib/utils";
 
-export async function updateCustomerProfileAction(formData: FormData) {
+export async function updateCustomerProfileAction(
+  _state: FormActionState,
+  formData: FormData,
+) {
   const { organization } = await requireDashboardContext();
   const supabase = await createClient();
 
@@ -27,7 +36,10 @@ export async function updateCustomerProfileAction(formData: FormData) {
   });
 
   if (!parsed.success) {
-    throw new Error(parsed.error.issues[0]?.message ?? "Invalid customer profile.");
+    return createErrorActionState(
+      parsed.error.issues[0]?.message ?? "Invalid customer profile.",
+      getFieldErrorsFromZodError(parsed.error),
+    );
   }
 
   const { error } = await supabase
@@ -45,10 +57,12 @@ export async function updateCustomerProfileAction(formData: FormData) {
     .eq("id", parsed.data.customerId);
 
   if (error) {
-    throw new Error(error.message);
+    return createErrorActionState(error.message);
   }
 
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/customers");
   revalidatePath(`/dashboard/customers/${parsed.data.customerId}`);
+
+  return createSuccessActionState("Customer profile saved.");
 }

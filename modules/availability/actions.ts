@@ -8,6 +8,12 @@ import {
   businessLocalDateTimeToUtc,
   parseTimeInputToMinutes,
 } from "@/lib/date-utils";
+import {
+  createErrorActionState,
+  createSuccessActionState,
+  getFieldErrorsFromZodError,
+  type FormActionState,
+} from "@/lib/form-action-state";
 import { createClient } from "@/lib/supabase/server";
 import {
   blockedDateSchema,
@@ -18,7 +24,10 @@ import {
 } from "@/lib/validation/availability";
 import { formDataValue, nullableString } from "@/lib/utils";
 
-export async function saveWeeklyAvailabilityAction(formData: FormData) {
+export async function saveWeeklyAvailabilityAction(
+  _state: FormActionState,
+  formData: FormData,
+) {
   const { organization } = await requireDashboardContext();
   const supabase = await createClient();
 
@@ -32,7 +41,10 @@ export async function saveWeeklyAvailabilityAction(formData: FormData) {
   const parsed = weeklyAvailabilitySchema.safeParse({ days });
 
   if (!parsed.success) {
-    throw new Error(parsed.error.issues[0]?.message ?? "Invalid weekly hours.");
+    return createErrorActionState(
+      parsed.error.issues[0]?.message ?? "Invalid weekly hours.",
+      getFieldErrorsFromZodError(parsed.error),
+    );
   }
 
   const activeRules = parsed.data.days
@@ -50,7 +62,7 @@ export async function saveWeeklyAvailabilityAction(formData: FormData) {
     .eq("organization_id", organization.id);
 
   if (deleteError) {
-    throw new Error(deleteError.message);
+    return createErrorActionState(deleteError.message);
   }
 
   if (activeRules.length > 0) {
@@ -59,14 +71,19 @@ export async function saveWeeklyAvailabilityAction(formData: FormData) {
       .insert(activeRules);
 
     if (insertError) {
-      throw new Error(insertError.message);
+      return createErrorActionState(insertError.message);
     }
   }
 
   revalidatePath("/dashboard/availability");
+
+  return createSuccessActionState("Weekly availability saved.");
 }
 
-export async function addBlockedDateAction(formData: FormData) {
+export async function addBlockedDateAction(
+  _state: FormActionState,
+  formData: FormData,
+) {
   const { organization } = await requireDashboardContext();
   const supabase = await createClient();
   const parsed = blockedDateSchema.safeParse({
@@ -75,7 +92,10 @@ export async function addBlockedDateAction(formData: FormData) {
   });
 
   if (!parsed.success) {
-    throw new Error(parsed.error.issues[0]?.message ?? "Invalid blocked date.");
+    return createErrorActionState(
+      parsed.error.issues[0]?.message ?? "Invalid blocked date.",
+      getFieldErrorsFromZodError(parsed.error),
+    );
   }
 
   const { error } = await supabase.from("blocked_dates").insert({
@@ -85,13 +105,18 @@ export async function addBlockedDateAction(formData: FormData) {
   });
 
   if (error) {
-    throw new Error(error.message);
+    return createErrorActionState(error.message);
   }
 
   revalidatePath("/dashboard/availability");
+
+  return createSuccessActionState("Blocked date added.");
 }
 
-export async function removeBlockedDateAction(formData: FormData) {
+export async function removeBlockedDateAction(
+  _state: FormActionState,
+  formData: FormData,
+) {
   const { organization } = await requireDashboardContext();
   const supabase = await createClient();
   const parsed = deleteBlockedDateSchema.safeParse({
@@ -99,7 +124,7 @@ export async function removeBlockedDateAction(formData: FormData) {
   });
 
   if (!parsed.success) {
-    throw new Error("Invalid blocked date id.");
+    return createErrorActionState("Invalid blocked date id.");
   }
 
   const { error } = await supabase
@@ -109,13 +134,18 @@ export async function removeBlockedDateAction(formData: FormData) {
     .eq("organization_id", organization.id);
 
   if (error) {
-    throw new Error(error.message);
+    return createErrorActionState(error.message);
   }
 
   revalidatePath("/dashboard/availability");
+
+  return createSuccessActionState("Blocked date removed.");
 }
 
-export async function addTimeOffAction(formData: FormData) {
+export async function addTimeOffAction(
+  _state: FormActionState,
+  formData: FormData,
+) {
   const { organization } = await requireDashboardContext();
   const supabase = await createClient();
   const startsAtLocal = formDataValue(formData.get("startsAtLocal"));
@@ -128,7 +158,14 @@ export async function addTimeOffAction(formData: FormData) {
   });
 
   if (!parsed.success) {
-    throw new Error(parsed.error.issues[0]?.message ?? "Invalid time off.");
+    return createErrorActionState(
+      parsed.error.issues[0]?.message ?? "Invalid time off.",
+      {
+        ...getFieldErrorsFromZodError(parsed.error),
+        endsAtLocal: parsed.error.flatten().fieldErrors.endsAt?.[0],
+        startsAtLocal: parsed.error.flatten().fieldErrors.startsAt?.[0],
+      },
+    );
   }
 
   const { error } = await supabase.from("time_off_periods").insert({
@@ -139,13 +176,18 @@ export async function addTimeOffAction(formData: FormData) {
   });
 
   if (error) {
-    throw new Error(error.message);
+    return createErrorActionState(error.message);
   }
 
   revalidatePath("/dashboard/availability");
+
+  return createSuccessActionState("Time off added.");
 }
 
-export async function removeTimeOffAction(formData: FormData) {
+export async function removeTimeOffAction(
+  _state: FormActionState,
+  formData: FormData,
+) {
   const { organization } = await requireDashboardContext();
   const supabase = await createClient();
   const parsed = deleteTimeOffSchema.safeParse({
@@ -153,7 +195,7 @@ export async function removeTimeOffAction(formData: FormData) {
   });
 
   if (!parsed.success) {
-    throw new Error("Invalid time-off id.");
+    return createErrorActionState("Invalid time-off id.");
   }
 
   const { error } = await supabase
@@ -163,8 +205,10 @@ export async function removeTimeOffAction(formData: FormData) {
     .eq("organization_id", organization.id);
 
   if (error) {
-    throw new Error(error.message);
+    return createErrorActionState(error.message);
   }
 
   revalidatePath("/dashboard/availability");
+
+  return createSuccessActionState("Time off removed.");
 }
