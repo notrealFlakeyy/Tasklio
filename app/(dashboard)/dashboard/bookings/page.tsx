@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { ActionForm } from "@/components/forms/action-form";
+import { DestructiveActionDialog } from "@/components/forms/destructive-action-dialog";
 import { FieldError } from "@/components/forms/field-error";
 import { FormNotice } from "@/components/forms/form-notice";
 import { SubmitButton } from "@/components/forms/submit-button";
@@ -38,11 +39,9 @@ function statusTone(status: string) {
 export default async function BookingsPage() {
   const { organization } = await requireDashboardContext();
   const bookings = await listBookingsForDashboard(organization.id);
-  const now = Date.now();
 
   const upcomingBookings = bookings.filter(
-    (booking) =>
-      booking.status !== "cancelled" && new Date(booking.ends_at).getTime() >= now,
+    (booking) => booking.status === "pending" || booking.status === "confirmed",
   );
   const pendingBookings = bookings.filter((booking) => booking.status === "pending");
   const bookedRevenue = bookings
@@ -210,8 +209,8 @@ export default async function BookingsPage() {
                     </div>
 
                     <div className="flex flex-wrap gap-2">
-                      {booking.customer_id ? (
-                        <Link href={`/dashboard/customers/${booking.customer_id}`}>
+                      {booking.customers?.public_id ? (
+                        <Link href={`/dashboard/customers/${booking.customers.public_id}`}>
                           <Button variant="secondary">Open customer</Button>
                         </Link>
                       ) : (
@@ -226,12 +225,16 @@ export default async function BookingsPage() {
                         </ActionForm>
                       ) : null}
                       {booking.status !== "cancelled" ? (
-                        <ActionForm action={cancelBookingAction}>
-                          <input name="bookingId" type="hidden" value={booking.id} />
-                          <Button type="submit" variant="danger">
-                            Cancel
-                          </Button>
-                        </ActionForm>
+                        <DestructiveActionDialog
+                          action={cancelBookingAction}
+                          confirmLabel="Cancel booking"
+                          description="This booking will be marked as cancelled and removed from the active schedule. Use this when the appointment is truly no longer happening."
+                          fieldName="bookingId"
+                          fieldValue={booking.id}
+                          pendingLabel="Cancelling..."
+                          title={`Cancel ${booking.customer_name}'s booking?`}
+                          triggerLabel="Cancel"
+                        />
                       ) : null}
                     </div>
                   </div>

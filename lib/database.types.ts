@@ -11,6 +11,13 @@ export type Database = {
     Tables: {
       organizations: {
         Row: {
+          public_about_body: string | null;
+          public_about_title: string | null;
+          brand_accent_color: string;
+          brand_alt_color: string;
+          brand_logo_url: string | null;
+          brand_primary_color: string;
+          brand_surface_color: string;
           booking_notice_hours: number;
           contact_email: string | null;
           contact_phone: string | null;
@@ -19,6 +26,13 @@ export type Database = {
           default_booking_buffer_minutes: number;
           id: string;
           name: string;
+          public_contact_body: string | null;
+          public_contact_title: string | null;
+          public_description: string | null;
+          public_headline: string | null;
+          public_id: string;
+          public_site_enabled: boolean;
+          public_tagline: string | null;
           slot_interval_minutes: number;
           slug: string;
           status: Database["public"]["Enums"]["organization_status"];
@@ -26,6 +40,13 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
+          public_about_body?: string | null;
+          public_about_title?: string | null;
+          brand_accent_color?: string;
+          brand_alt_color?: string;
+          brand_logo_url?: string | null;
+          brand_primary_color?: string;
+          brand_surface_color?: string;
           booking_notice_hours?: number;
           contact_email?: string | null;
           contact_phone?: string | null;
@@ -34,6 +55,13 @@ export type Database = {
           default_booking_buffer_minutes?: number;
           id?: string;
           name: string;
+          public_contact_body?: string | null;
+          public_contact_title?: string | null;
+          public_description?: string | null;
+          public_headline?: string | null;
+          public_id?: string;
+          public_site_enabled?: boolean;
+          public_tagline?: string | null;
           slot_interval_minutes?: number;
           slug: string;
           status?: Database["public"]["Enums"]["organization_status"];
@@ -41,6 +69,13 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
+          public_about_body?: string | null;
+          public_about_title?: string | null;
+          brand_accent_color?: string;
+          brand_alt_color?: string;
+          brand_logo_url?: string | null;
+          brand_primary_color?: string;
+          brand_surface_color?: string;
           booking_notice_hours?: number;
           contact_email?: string | null;
           contact_phone?: string | null;
@@ -49,6 +84,13 @@ export type Database = {
           default_booking_buffer_minutes?: number;
           id?: string;
           name?: string;
+          public_contact_body?: string | null;
+          public_contact_title?: string | null;
+          public_description?: string | null;
+          public_headline?: string | null;
+          public_id?: string;
+          public_site_enabled?: boolean;
+          public_tagline?: string | null;
           slot_interval_minutes?: number;
           slug?: string;
           status?: Database["public"]["Enums"]["organization_status"];
@@ -97,6 +139,7 @@ export type Database = {
           name: string;
           organization_id: string;
           price_amount: number;
+          public_id: string;
           updated_at: string;
         };
         Insert: {
@@ -110,6 +153,7 @@ export type Database = {
           name: string;
           organization_id: string;
           price_amount?: number;
+          public_id?: string;
           updated_at?: string;
         };
         Update: {
@@ -123,6 +167,7 @@ export type Database = {
           name?: string;
           organization_id?: string;
           price_amount?: number;
+          public_id?: string;
           updated_at?: string;
         };
       };
@@ -219,6 +264,7 @@ export type Database = {
           notes: string | null;
           organization_id: string;
           phone: string | null;
+          public_id: string;
           status: Database["public"]["Enums"]["customer_status"];
           tags: string[];
           updated_at: string;
@@ -234,6 +280,7 @@ export type Database = {
           notes?: string | null;
           organization_id: string;
           phone?: string | null;
+          public_id?: string;
           status?: Database["public"]["Enums"]["customer_status"];
           tags?: string[];
           updated_at?: string;
@@ -249,6 +296,7 @@ export type Database = {
           notes?: string | null;
           organization_id?: string;
           phone?: string | null;
+          public_id?: string;
           status?: Database["public"]["Enums"]["customer_status"];
           tags?: string[];
           updated_at?: string;
@@ -256,6 +304,7 @@ export type Database = {
       };
       bookings: {
         Row: {
+          booking_window: string;
           buffer_minutes: number;
           cancelled_at: string | null;
           confirmed_at: string | null;
@@ -270,6 +319,7 @@ export type Database = {
           id: string;
           internal_notes: string | null;
           organization_id: string;
+          public_id: string;
           service_currency: string;
           service_duration_minutes: number;
           service_id: string;
@@ -281,6 +331,7 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
+          booking_window?: string;
           buffer_minutes?: number;
           cancelled_at?: string | null;
           confirmed_at?: string | null;
@@ -295,6 +346,7 @@ export type Database = {
           id?: string;
           internal_notes?: string | null;
           organization_id: string;
+          public_id?: string;
           service_currency?: string;
           service_duration_minutes?: number;
           service_id: string;
@@ -306,6 +358,7 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
+          booking_window?: string;
           buffer_minutes?: number;
           cancelled_at?: string | null;
           confirmed_at?: string | null;
@@ -320,6 +373,7 @@ export type Database = {
           id?: string;
           internal_notes?: string | null;
           organization_id?: string;
+          public_id?: string;
           service_currency?: string;
           service_duration_minutes?: number;
           service_id?: string;

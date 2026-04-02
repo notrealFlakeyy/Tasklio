@@ -23,6 +23,7 @@ export async function updateCustomerProfileAction(
 ) {
   const { organization } = await requireDashboardContext();
   const supabase = await createClient();
+  const customerPublicId = formDataValue(formData.get("customerPublicId"));
 
   const parsed = updateCustomerSchema.safeParse({
     customerId: formDataValue(formData.get("customerId")),
@@ -62,7 +63,9 @@ export async function updateCustomerProfileAction(
 
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/customers");
-  revalidatePath(`/dashboard/customers/${parsed.data.customerId}`);
+  revalidatePath(
+    `/dashboard/customers/${customerPublicId || parsed.data.customerId}`,
+  );
 
   return createSuccessActionState("Customer profile saved.");
 }

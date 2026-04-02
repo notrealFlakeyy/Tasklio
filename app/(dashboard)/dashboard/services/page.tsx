@@ -1,4 +1,5 @@
 import { ActionForm } from "@/components/forms/action-form";
+import { DestructiveActionDialog } from "@/components/forms/destructive-action-dialog";
 import { FieldError } from "@/components/forms/field-error";
 import { FormNotice } from "@/components/forms/form-notice";
 import { SubmitButton } from "@/components/forms/submit-button";
@@ -277,12 +278,16 @@ export default async function ServicesPage() {
                       </div>
                     </div>
 
-                    <ActionForm action={deleteServiceAction} toastMode="all">
-                      <input name="serviceId" type="hidden" value={service.id} />
-                      <Button type="submit" variant="danger">
-                        Delete
-                      </Button>
-                    </ActionForm>
+                    <DestructiveActionDialog
+                      action={deleteServiceAction}
+                      confirmLabel="Delete service"
+                      description="Deleting this service removes it from the catalog immediately. Existing booking records stay intact, but this offer disappears from the public booking flow."
+                      fieldName="serviceId"
+                      fieldValue={service.id}
+                      pendingLabel="Deleting..."
+                      title={`Delete ${service.name}?`}
+                      triggerLabel="Delete"
+                    />
                   </div>
 
                   <div className="mt-6 grid gap-3 md:grid-cols-3">

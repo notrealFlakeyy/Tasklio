@@ -1,3 +1,4 @@
+import { ClientFlowLogo } from "@/components/clientflow-logo";
 import { AuthSignUpForm } from "@/components/forms/auth-sign-up-form";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { SpotlightPanel } from "@/components/ui/spotlight-panel";
@@ -10,9 +11,10 @@ export default function SignUpPage() {
       <div className="grid w-full gap-6 lg:grid-cols-[0.88fr,1.12fr]">
         <SpotlightPanel className="p-8 md:p-10">
           <div className="space-y-5">
+            <ClientFlowLogo imageClassName="border border-[color:var(--color-border)] bg-white/84 p-2 shadow-[var(--shadow-soft)]" />
             <p className="editorial-kicker">Create the first workspace</p>
             <h1 className="text-balance text-4xl leading-tight font-semibold md:text-5xl">
-              Launch with a front door that feels inviting and an operating layer that feels composed.
+              Launch ClientFlow with a front door that feels inviting and an operating layer that feels composed.
             </h1>
             <p className="max-w-xl text-lg leading-8 text-[var(--color-muted)]">
               The architecture starts single-tenant for speed, but the model is
@@ -23,7 +25,8 @@ export default function SignUpPage() {
 
         <Card className="w-full space-y-6 p-8 md:p-10">
           <div className="space-y-2">
-            <CardTitle className="text-3xl">Create owner account</CardTitle>
+            <ClientFlowLogo className="mb-3" imageClassName="border border-[color:var(--color-border)] bg-white/84 p-2" size={44} />
+            <CardTitle className="text-3xl">Create ClientFlow workspace</CardTitle>
             <CardDescription>
               Set up the business, public URL, and timezone in one calm flow.
             </CardDescription>

@@ -1,4 +1,5 @@
 import { ActionForm } from "@/components/forms/action-form";
+import { DestructiveActionDialog } from "@/components/forms/destructive-action-dialog";
 import { FieldError } from "@/components/forms/field-error";
 import { FormNotice } from "@/components/forms/form-notice";
 import { SubmitButton } from "@/components/forms/submit-button";
@@ -210,12 +211,10 @@ export default async function AvailabilityPage() {
             <div className="space-y-3">
               {availability.blockedDates.length ? (
                 availability.blockedDates.map((blockedDate) => (
-                  <ActionForm
-                    action={removeBlockedDateAction}
+                  <div
                     className="flex flex-wrap items-start justify-between gap-4 rounded-[26px] border border-[color:var(--color-border)] bg-white/82 p-5"
                     key={blockedDate.id}
                   >
-                    <input name="blockedDateId" type="hidden" value={blockedDate.id} />
                     <div className="space-y-1">
                       <p className="text-base font-semibold text-[var(--color-ink)]">
                         {blockedDate.blocked_on}
@@ -224,10 +223,17 @@ export default async function AvailabilityPage() {
                         {blockedDate.reason ?? "No reason provided"}
                       </p>
                     </div>
-                    <Button type="submit" variant="danger">
-                      Remove
-                    </Button>
-                  </ActionForm>
+                    <DestructiveActionDialog
+                      action={removeBlockedDateAction}
+                      confirmLabel="Remove blocked date"
+                      description="This full-day closure will be removed, and the day becomes bookable again anywhere the weekly schedule allows."
+                      fieldName="blockedDateId"
+                      fieldValue={blockedDate.id}
+                      pendingLabel="Removing..."
+                      title={`Remove ${blockedDate.blocked_on}?`}
+                      triggerLabel="Remove"
+                    />
+                  </div>
                 ))
               ) : (
                 <EmptyState
@@ -280,12 +286,10 @@ export default async function AvailabilityPage() {
             <div className="space-y-3">
               {availability.timeOffPeriods.length ? (
                 availability.timeOffPeriods.map((period) => (
-                  <ActionForm
-                    action={removeTimeOffAction}
+                  <div
                     className="flex flex-wrap items-start justify-between gap-4 rounded-[26px] border border-[color:var(--color-border)] bg-white/82 p-5"
                     key={period.id}
                   >
-                    <input name="timeOffId" type="hidden" value={period.id} />
                     <div className="space-y-1">
                       <p className="text-base font-semibold text-[var(--color-ink)]">
                         {formatDateTimeLocalValue(period.starts_at, organization.timezone)}
@@ -297,10 +301,17 @@ export default async function AvailabilityPage() {
                         {period.reason ?? "No reason provided"}
                       </p>
                     </div>
-                    <Button type="submit" variant="danger">
-                      Remove
-                    </Button>
-                  </ActionForm>
+                    <DestructiveActionDialog
+                      action={removeTimeOffAction}
+                      confirmLabel="Remove time off"
+                      description="Removing this timed absence will put those hours back into the booking engine if your weekly schedule allows them."
+                      fieldName="timeOffId"
+                      fieldValue={period.id}
+                      pendingLabel="Removing..."
+                      title="Remove this time-off block?"
+                      triggerLabel="Remove"
+                    />
+                  </div>
                 ))
               ) : (
                 <EmptyState

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { startOfMonth } from "date-fns";
+import { format, startOfMonth, subMonths } from "date-fns";
 
 import type { Tables } from "@/lib/database.types";
 import { createClient } from "@/lib/supabase/server";
@@ -20,12 +20,24 @@ export type RevenueByServiceItem = {
   totalBookings: number;
 };
 
+export type MonthlyRevenuePoint = {
+  month: string;
+  revenue: number;
+};
+
+export type CustomerStatusPoint = {
+  count: number;
+  status: string;
+};
+
 export async function getDashboardSnapshot(organizationId: string): Promise<{
   activeServices: number;
   averageBookingValueAmount: number;
   bookedRevenueThisMonthAmount: number;
   customerStatusBreakdown: Record<string, number>;
+  customerStatusSeries: CustomerStatusPoint[];
   newCustomersThisMonth: number;
+  monthlyRevenueSeries: MonthlyRevenuePoint[];
   pastBookings: number;
   pendingBookings: number;
   totalCustomers: number;
@@ -105,6 +117,16 @@ export async function getDashboardSnapshot(organizationId: string): Promise<{
     Tables<"bookings">,
     "service_id" | "service_name_snapshot" | "service_price_amount" | "starts_at" | "status"
   >[];
+  const monthBuckets = Array.from({ length: 6 }, (_, index) => {
+    const date = startOfMonth(subMonths(now, 5 - index));
+
+    return {
+      key: format(date, "yyyy-MM"),
+      month: format(date, "MMM"),
+      revenue: 0,
+    };
+  });
+  const monthBucketMap = new Map(monthBuckets.map((bucket) => [bucket.key, bucket]));
 
   const customerStatusBreakdown = customers.reduce<Record<string, number>>(
     (accumulator, customer) => {
@@ -136,6 +158,13 @@ export async function getDashboardSnapshot(organizationId: string): Promise<{
       bookedRevenueThisMonthAmount += booking.service_price_amount;
     }
 
+    const bookingMonthKey = format(new Date(booking.starts_at), "yyyy-MM");
+    const bucket = monthBucketMap.get(bookingMonthKey);
+
+    if (bucket) {
+      bucket.revenue += booking.service_price_amount;
+    }
+
     const serviceId = booking.service_id;
     const current = topServicesMap.get(serviceId) ?? {
       bookedRevenueAmount: 0,
@@ -150,13 +179,20 @@ export async function getDashboardSnapshot(organizationId: string): Promise<{
     topServicesMap.set(serviceId, current);
   }
 
+  const customerStatusSeries = ["lead", "active", "vip", "inactive"].map((status) => ({
+    count: customerStatusBreakdown[status] ?? 0,
+    status,
+  }));
+
   return {
     activeServices: servicesResult.count ?? 0,
     averageBookingValueAmount:
       bookedValueCount > 0 ? Math.round(bookedValueAccumulator / bookedValueCount) : 0,
     bookedRevenueThisMonthAmount,
     customerStatusBreakdown,
+    customerStatusSeries,
     newCustomersThisMonth: newCustomersCountResult.count ?? 0,
+    monthlyRevenueSeries: monthBuckets.map(({ month, revenue }) => ({ month, revenue })),
     pastBookings: pastCountResult.count ?? 0,
     pendingBookings: pendingCountResult.count ?? 0,
     totalCustomers: customersCountResult.count ?? 0,

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import type { Database, Tables } from "@/lib/database.types";
+import { getFieldErrorsFromZodError } from "@/lib/form-action-state";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createPublicBookingSchema } from "@/lib/validation/bookings";
 
@@ -26,7 +27,10 @@ export async function POST(request: Request) {
 
   if (!parsed.success) {
     return NextResponse.json(
-      { message: parsed.error.issues[0]?.message ?? "Invalid booking payload." },
+      {
+        fieldErrors: getFieldErrorsFromZodError(parsed.error),
+        message: parsed.error.issues[0]?.message ?? "Invalid booking payload.",
+      },
       { status: 400 },
     );
   }

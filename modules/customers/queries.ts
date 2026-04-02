@@ -112,35 +112,34 @@ export async function listCustomersForOrganization(
 
 export async function getCustomerProfile(
   organizationId: string,
-  customerId: string,
+  customerPublicId: string,
 ): Promise<CustomerProfile | null> {
   const supabase = await createClient();
-  const [customerResult, bookingsResult] = await Promise.all([
-    supabase
-      .from("customers")
-      .select("*")
-      .eq("organization_id", organizationId)
-      .eq("id", customerId)
-      .maybeSingle(),
-    supabase
-      .from("bookings")
-      .select("*, services(name)")
-      .eq("organization_id", organizationId)
-      .eq("customer_id", customerId)
-      .order("starts_at", { ascending: false }),
-  ]);
+  const { data: customerData } = await supabase
+    .from("customers")
+    .select("*")
+    .eq("organization_id", organizationId)
+    .eq("public_id", customerPublicId)
+    .maybeSingle();
 
-  if (!customerResult.data) {
+  if (!customerData) {
     return null;
   }
 
-  const bookingHistory = (bookingsResult.data ?? []) as (Tables<"bookings"> & {
+  const { data: bookingsData } = await supabase
+    .from("bookings")
+    .select("*, services(name)")
+    .eq("organization_id", organizationId)
+    .eq("customer_id", customerData.id)
+    .order("starts_at", { ascending: false });
+
+  const bookingHistory = (bookingsData ?? []) as (Tables<"bookings"> & {
     services: Pick<Tables<"services">, "name"> | null;
   })[];
 
   return {
     bookingHistory,
-    customer: customerResult.data as Tables<"customers">,
+    customer: customerData as Tables<"customers">,
     metrics: summarizeCustomerBookings(bookingHistory),
   };
 }

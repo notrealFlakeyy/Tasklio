@@ -41,9 +41,9 @@ export default async function CustomerDetailPage({
 }: {
   params: Promise<{ customerId: string }>;
 }) {
-  const { customerId } = await params;
+  const { customerId: customerPublicId } = await params;
   const { organization } = await requireDashboardContext();
-  const profile = await getCustomerProfile(organization.id, customerId);
+  const profile = await getCustomerProfile(organization.id, customerPublicId);
 
   if (!profile) {
     notFound();
@@ -136,6 +136,11 @@ export default async function CustomerDetailPage({
         <SpotlightPanel className="p-6 md:p-8">
           <ActionForm action={updateCustomerProfileAction} className="space-y-6">
             <input name="customerId" type="hidden" value={profile.customer.id} />
+            <input
+              name="customerPublicId"
+              type="hidden"
+              value={profile.customer.public_id}
+            />
 
             <div>
               <p className="editorial-kicker">Relationship data</p>

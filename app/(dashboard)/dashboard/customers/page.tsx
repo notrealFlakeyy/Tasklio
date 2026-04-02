@@ -142,7 +142,10 @@ export default async function CustomersPage() {
         <div className="space-y-4">
           {customers.length ? (
             customers.map((customer) => (
-              <Link href={`/dashboard/customers/${customer.id}`} key={customer.id}>
+              <Link
+                href={`/dashboard/customers/${customer.public_id}`}
+                key={customer.id}
+              >
                 <SpotlightPanel className="p-6 md:p-7">
                   <div className="flex flex-wrap items-start justify-between gap-5">
                     <div className="max-w-3xl space-y-4">

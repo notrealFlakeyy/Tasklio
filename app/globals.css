@@ -6,6 +6,7 @@
 }
 
 :root {
+  color-scheme: light;
   --background-soft: #eaf7cf;
   --background-alt: #e6fdff;
   --text-strong: #443730;
@@ -32,6 +33,7 @@
 
 html {
   scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }
 
 body {
@@ -43,7 +45,28 @@ body {
     linear-gradient(180deg, rgba(255, 255, 255, 0.94), var(--background));
   color: var(--color-ink);
   font-family: var(--font-manrope), sans-serif;
+  line-height: 1.5;
   text-rendering: optimizeLegibility;
+}
+
+body::-webkit-scrollbar {
+  width: 12px;
+}
+
+body::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.45);
+}
+
+body::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, rgba(165, 144, 126, 0.78), rgba(120, 100, 82, 0.72));
+  background-clip: padding-box;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(120, 100, 82, 0.82), rgba(68, 55, 48, 0.8));
+  background-clip: padding-box;
 }
 
 h1,
@@ -172,6 +195,21 @@ h6 {
   pointer-events: none;
 }
 
+.toast-enter {
+  animation: toastEnter 320ms cubic-bezier(0.21, 1, 0.32, 1);
+}
+
+@keyframes toastEnter {
+  from {
+    transform: translate3d(0, -14px, 0) scale(0.985);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 1;
+  }
+}
+
 @keyframes drift {
   0%,
   100% {
@@ -205,8 +243,21 @@ h6 {
     scroll-behavior: auto;
   }
 
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
   .animate-drift,
   .animate-pulse-glow {
     animation: none;
+  }
+
+  .hover-lift:hover {
+    transform: none;
+    box-shadow: var(--shadow-soft);
   }
 }

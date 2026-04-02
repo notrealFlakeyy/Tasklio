@@ -1,4 +1,4 @@
-# Booking SaaS MVP Starter
+# ClientFlow
 
 Production-ready booking MVP scaffold built with:
 
@@ -36,3 +36,14 @@ Production-ready booking MVP scaffold built with:
 - Add tests for slot generation and booking creation race conditions
 - Extend availability UI for split shifts and multiple resources
 - Add plan enforcement and usage metering
+
+## Private Beta Checklist
+
+1. Verify `.env.local` uses Supabase keys from the same project.
+2. Run the latest Supabase SQL migrations on the target project.
+3. Create one real owner account through the app.
+4. Add at least one service and publish weekly availability.
+5. Open `/book/[slug]` and complete one real test booking.
+6. Confirm and cancel bookings from the dashboard once each.
+7. Review the customer record created from that booking.
+8. Share the product with a small group of friendly testers before opening it wider.

@@ -40,28 +40,19 @@ begin
 end;
 $$;
 
-create or replace function public.is_organization_member(
-  org_id uuid,
-  allowed_roles public.membership_role[] default null
-)
-returns boolean
-language sql
-stable
-security definer
-set search_path = public
+create or replace function public.set_booking_window()
+returns trigger
+language plpgsql
 as $$
-  select exists (
-    select 1
-    from public.organization_members as om
-    where om.organization_id = org_id
-      and om.user_id = auth.uid()
-      and om.is_active = true
-      and (allowed_roles is null or om.role = any(allowed_roles))
+begin
+  new.booking_window := tstzrange(
+    new.starts_at,
+    new.ends_at + make_interval(mins => new.buffer_minutes),
+    '[)'
   );
+  return new;
+end;
 $$;
-
-revoke all on function public.is_organization_member(uuid, public.membership_role[]) from public;
-grant execute on function public.is_organization_member(uuid, public.membership_role[]) to authenticated;
 
 create table if not exists public.organizations (
   id uuid primary key default gen_random_uuid(),
@@ -159,6 +150,7 @@ create table if not exists public.bookings (
   starts_at timestamptz not null,
   ends_at timestamptz not null,
   buffer_minutes integer not null default 0 check (buffer_minutes between 0 and 240),
+  booking_window tstzrange,
   customer_name text not null,
   customer_email citext,
   customer_phone text,
@@ -207,6 +199,29 @@ create table if not exists public.organization_subscriptions (
   updated_at timestamptz not null default timezone('utc', now())
 );
 
+create or replace function public.is_organization_member(
+  org_id uuid,
+  allowed_roles public.membership_role[] default null
+)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.organization_members as om
+    where om.organization_id = org_id
+      and om.user_id = auth.uid()
+      and om.is_active = true
+      and (allowed_roles is null or om.role = any(allowed_roles))
+  );
+$$;
+
+revoke all on function public.is_organization_member(uuid, public.membership_role[]) from public;
+grant execute on function public.is_organization_member(uuid, public.membership_role[]) to authenticated;
+
 create index if not exists organizations_status_idx on public.organizations (status);
 create index if not exists organization_members_user_id_idx on public.organization_members (user_id);
 create index if not exists services_organization_id_idx on public.services (organization_id, is_active);
@@ -229,11 +244,7 @@ begin
       add constraint bookings_no_overlap
       exclude using gist (
         organization_id with =,
-        tstzrange(
-          starts_at,
-          ends_at + make_interval(mins => buffer_minutes),
-          '[)'
-        ) with &&
+        booking_window with &&
       )
       where (status in ('pending', 'confirmed'));
   end if;
@@ -275,6 +286,13 @@ create trigger bookings_set_updated_at
 before update on public.bookings
 for each row
 execute function public.set_updated_at();
+
+drop trigger if exists bookings_set_booking_window on public.bookings;
+create trigger bookings_set_booking_window
+before insert or update of starts_at, ends_at, buffer_minutes
+on public.bookings
+for each row
+execute function public.set_booking_window();
 
 drop trigger if exists organization_subscriptions_set_updated_at on public.organization_subscriptions;
 create trigger organization_subscriptions_set_updated_at

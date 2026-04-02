@@ -9,6 +9,7 @@ import {
   UsersRound,
 } from "lucide-react";
 
+import { ClientFlowLogo } from "@/components/clientflow-logo";
 import { Reveal } from "@/components/ui/reveal";
 import { SpotlightPanel } from "@/components/ui/spotlight-panel";
 import { Button } from "@/components/ui/button";
@@ -54,21 +55,20 @@ const operatingLoops = [
 export default function HomePage() {
   return (
     <main className="mx-auto max-w-7xl px-6 py-8 lg:px-10">
-      <header className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <p className="text-lg font-semibold tracking-[0.08em] text-[var(--color-brand-strong)] uppercase">
-            Northfield
-          </p>
-          <p className="mt-1 text-sm text-[var(--color-muted)]">
-            A warmer booking and client operations starter
+      <header className="flex flex-wrap items-end justify-between gap-6 border-b border-[color:rgba(68,55,48,0.08)] pb-6">
+        <div className="space-y-3">
+          <ClientFlowLogo size={160} />
+          <p className="max-w-xl text-sm leading-7 text-[#6a5b51] md:text-[15px]">
+            A calmer visual identity for booking, client memory, and everyday business operations.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+
+        <div className="flex flex-wrap gap-3 sm:justify-end">
           <Link href="/auth/sign-in">
             <Button variant="ghost">Sign in</Button>
           </Link>
           <Link href="/auth/sign-up">
-            <Button>Create owner account</Button>
+            <Button>Create ClientFlow workspace</Button>
           </Link>
         </div>
       </header>
@@ -100,7 +100,7 @@ export default function HomePage() {
                   <ArrowRight className="size-4" />
                 </Button>
               </Link>
-              <Link href="/book/demo-business">
+              <Link href="/book/clientflow-demo">
                 <Button size="lg" variant="secondary">
                   Preview the public booking experience
                 </Button>
@@ -342,7 +342,7 @@ export default function HomePage() {
             <div className="absolute inset-y-0 right-0 hidden w-1/2 bg-[radial-gradient(circle_at_center,rgba(230,253,255,0.85),transparent_60%)] lg:block" />
             <div className="relative grid gap-8 lg:grid-cols-[1fr,auto] lg:items-center">
               <div className="space-y-5">
-                <p className="editorial-kicker">Move from bland starter to memorable experience</p>
+                <p className="editorial-kicker">Move from generic tools to a more memorable ClientFlow experience</p>
                 <h2 className="text-balance text-4xl leading-tight font-semibold md:text-5xl">
                   A calmer visual language, richer interaction, and a front end that feels cared for.
                 </h2>
@@ -354,7 +354,7 @@ export default function HomePage() {
               </div>
               <div className="flex flex-wrap gap-3">
                 <Link href="/auth/sign-up">
-                  <Button size="lg">Create your workspace</Button>
+                  <Button size="lg">Create your ClientFlow workspace</Button>
                 </Link>
                 <Link href="/dashboard">
                   <Button size="lg" variant="secondary">

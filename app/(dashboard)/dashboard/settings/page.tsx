@@ -1,16 +1,27 @@
+/* eslint-disable @next/next/no-img-element */
+
+import Link from "next/link";
+import { ExternalLink } from "lucide-react";
+
 import { ActionForm } from "@/components/forms/action-form";
 import { FieldError } from "@/components/forms/field-error";
 import { FormNotice } from "@/components/forms/form-notice";
 import { SubmitButton } from "@/components/forms/submit-button";
-import { SpotlightPanel } from "@/components/ui/spotlight-panel";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SpotlightPanel } from "@/components/ui/spotlight-panel";
+import { Textarea } from "@/components/ui/textarea";
 import { requireDashboardContext } from "@/lib/auth";
+import {
+  buildPublicBrandingStyle,
+  getOrganizationBranding,
+} from "@/lib/organization-branding";
 import { updateOrganizationSettingsAction } from "@/modules/organizations/actions";
 
 export default async function SettingsPage() {
   const { organization } = await requireDashboardContext();
+  const branding = getOrganizationBranding(organization);
 
   return (
     <div className="space-y-6">
@@ -21,12 +32,11 @@ export default async function SettingsPage() {
           <div className="max-w-3xl">
             <p className="editorial-kicker">Business profile</p>
             <h1 className="mt-4 text-4xl font-semibold tracking-tight md:text-5xl">
-              Define the operating identity behind every booking.
+              Keep the public booking experience aligned with the business.
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-8 text-[var(--color-muted)] md:text-lg">
-              These organization-level settings shape public booking links, slot
-              generation, and future SaaS controls like billing, branding, and
-              custom domains.
+              This page now focuses on the essentials: business identity, booking-page
+              branding, contact details, and the scheduling rules that shape live slots.
             </p>
           </div>
 
@@ -37,16 +47,16 @@ export default async function SettingsPage() {
               </p>
               <CardTitle className="mt-3 text-2xl">{organization.name}</CardTitle>
               <CardDescription className="mt-2">
-                The main label customers see across the product.
+                The name customers see on the booking page and in notifications.
               </CardDescription>
             </Card>
             <Card className="bg-white/74">
               <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
-                Public slug
+                Public booking URL
               </p>
-              <CardTitle className="mt-3 text-2xl">{organization.slug}</CardTitle>
+              <CardTitle className="mt-3 text-2xl">/book/{organization.slug}</CardTitle>
               <CardDescription className="mt-2">
-                Powers the shareable booking URL today.
+                The single public entry point for your MVP.
               </CardDescription>
             </Card>
             <Card className="bg-white/74">
@@ -55,7 +65,7 @@ export default async function SettingsPage() {
               </p>
               <CardTitle className="mt-3 text-2xl">{organization.timezone}</CardTitle>
               <CardDescription className="mt-2">
-                Used for slot calculation and local dashboard display.
+                Used for slot generation and local booking display.
               </CardDescription>
             </Card>
             <Card className="bg-white/74">
@@ -69,47 +79,83 @@ export default async function SettingsPage() {
                 {organization.booking_notice_hours} hour notice window.
               </CardDescription>
             </Card>
+            <Card className="bg-white/74 sm:col-span-2">
+              <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
+                Booking-page branding
+              </p>
+              <CardTitle className="mt-3 text-2xl">{branding.tagline}</CardTitle>
+              <CardDescription className="mt-2">
+                Logo, colors, headline, and description for the public booking flow.
+              </CardDescription>
+            </Card>
           </div>
         </div>
       </section>
 
       <div className="grid gap-6 xl:grid-cols-[0.84fr,1.16fr]">
         <SpotlightPanel className="p-6 md:p-8">
-          <p className="editorial-kicker">Why these settings matter</p>
-          <CardTitle className="mt-3 text-3xl">A small settings surface with room to grow.</CardTitle>
+          <p className="editorial-kicker">Live booking preview</p>
+          <CardTitle className="mt-3 text-3xl">One polished public page is enough for the MVP.</CardTitle>
           <CardDescription className="mt-3 max-w-xl">
-            The MVP keeps this page intentionally lean, but the fields here are
-            already aligned with future product layers such as plan limits, multiple
-            brands, domain mapping, and customer-facing contact details.
+            Instead of splitting attention across a separate mini-site, ClientFlow now
+            keeps the public experience focused on one branded booking page that feels
+            warm, clear, and trustworthy.
           </CardDescription>
 
           <div className="mt-6 grid gap-4">
+            <div
+              className="rounded-[30px] border border-[color:var(--color-border)] bg-white/82 p-5 shadow-[0_18px_38px_rgba(68,55,48,0.06)]"
+              style={buildPublicBrandingStyle(branding)}
+            >
+              <div className="rounded-[26px] border border-[color:var(--color-border)] bg-[linear-gradient(160deg,var(--background-soft),rgba(255,255,255,0.94),var(--background-alt))] p-5">
+                <div className="flex items-center gap-3">
+                  {branding.logoUrl ? (
+                    <img
+                      alt={`${organization.name} logo`}
+                      className={
+                        branding.logoNeedsContrastPanel
+                          ? "h-16 w-16 rounded-[20px] border border-[color:rgba(68,55,48,0.08)] bg-white object-contain p-2 shadow-[0_14px_28px_rgba(68,55,48,0.08)]"
+                          : "h-12 w-12 rounded-[16px] border border-[color:var(--color-border)] bg-white/80 object-cover p-1"
+                      }
+                      src={branding.logoUrl}
+                    />
+                  ) : null}
+                  <div>
+                    <p className="text-sm font-semibold text-[var(--color-brand-strong)]">
+                      {branding.tagline}
+                    </p>
+                    <p className="mt-1 text-xs text-[var(--color-muted)]">
+                      /book/{organization.slug}
+                    </p>
+                  </div>
+                </div>
+                <p className="mt-5 text-2xl font-semibold text-[var(--color-brand-strong)]">
+                  {branding.headline}
+                </p>
+                <p className="mt-3 text-sm leading-7 text-[var(--color-muted)]">
+                  {branding.description}
+                </p>
+              </div>
+            </div>
+
             <Card className="bg-white/74">
-              <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
-                Public presence
-              </p>
-              <CardDescription className="mt-3">
-                Name, slug, and contact fields define how the business presents
-                itself before heavier branding controls are added.
-              </CardDescription>
-            </Card>
-            <Card className="bg-white/74">
-              <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
-                Scheduling policy
-              </p>
-              <CardDescription className="mt-3">
-                Notice hours and slot interval shape demand intake without needing
-                custom booking logic on every page.
-              </CardDescription>
-            </Card>
-            <Card className="bg-white/74">
-              <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
-                SaaS readiness
-              </p>
-              <CardDescription className="mt-3">
-                These fields map neatly to future billing, white-label, and multi-org
-                plan enforcement instead of becoming throwaway MVP data.
-              </CardDescription>
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
+                    Public link
+                  </p>
+                  <CardTitle className="mt-3 text-2xl">Open the booking page</CardTitle>
+                  <CardDescription className="mt-2 max-w-md">
+                    Review exactly what customers see before you share the link with testers.
+                  </CardDescription>
+                </div>
+                <Link href={`/book/${organization.slug}`} target="_blank">
+                  <span className="inline-flex h-11 items-center gap-2 rounded-[18px] border border-[color:var(--color-border)] bg-white/84 px-4 text-sm font-semibold text-[var(--color-ink)] shadow-[var(--shadow-soft)] transition hover:-translate-y-0.5">
+                    Open booking page
+                    <ExternalLink className="size-4" />
+                  </span>
+                </Link>
+              </div>
             </Card>
           </div>
         </SpotlightPanel>
@@ -119,10 +165,10 @@ export default async function SettingsPage() {
             <div className="grid gap-6">
               <div>
                 <p className="editorial-kicker">Edit organization</p>
-                <CardTitle className="mt-3 text-3xl">Keep the business profile accurate.</CardTitle>
+                <CardTitle className="mt-3 text-3xl">Keep the essentials clean and accurate.</CardTitle>
                 <CardDescription className="mt-3 max-w-2xl">
-                  Update the identity, public link settings, and scheduling controls
-                  that shape the customer experience across the app.
+                  These settings shape the customer-facing booking page and the scheduling
+                  rules behind it, without introducing extra public-site complexity.
                 </CardDescription>
               </div>
 
@@ -144,8 +190,64 @@ export default async function SettingsPage() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="timezone">Timezone</Label>
-                      <Input id="timezone" name="timezone" required defaultValue={organization.timezone} />
+                      <Input
+                        id="timezone"
+                        name="timezone"
+                        required
+                        defaultValue={organization.timezone}
+                      />
                       <FieldError name="timezone" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-[28px] border border-[color:var(--color-border)] bg-white/80 p-5 md:col-span-2">
+                  <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
+                    Public booking branding
+                  </p>
+                  <div className="mt-4 grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="brandLogoUrl">Logo URL</Label>
+                      <Input
+                        id="brandLogoUrl"
+                        name="brandLogoUrl"
+                        defaultValue={organization.brand_logo_url ?? ""}
+                        placeholder="https://your-site.com/logo.png"
+                      />
+                      <FieldError name="brandLogoUrl" />
+                      <p className="text-sm leading-6 text-[var(--color-muted)]">
+                        Use a public image URL for now. Later we can move this to Supabase Storage uploads.
+                      </p>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="publicTagline">Tagline</Label>
+                      <Input
+                        id="publicTagline"
+                        name="publicTagline"
+                        defaultValue={organization.public_tagline ?? ""}
+                        placeholder="Book with confidence"
+                      />
+                      <FieldError name="publicTagline" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="publicHeadline">Headline</Label>
+                      <Input
+                        id="publicHeadline"
+                        name="publicHeadline"
+                        defaultValue={organization.public_headline ?? ""}
+                        placeholder={`A calmer way to book with ${organization.name}.`}
+                      />
+                      <FieldError name="publicHeadline" />
+                    </div>
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="publicDescription">Description</Label>
+                      <Textarea
+                        id="publicDescription"
+                        name="publicDescription"
+                        defaultValue={organization.public_description ?? ""}
+                        placeholder="Introduce the business in a way that feels human, clear, and premium before the client chooses a service."
+                      />
+                      <FieldError name="publicDescription" />
                     </div>
                   </div>
                 </div>
@@ -182,9 +284,57 @@ export default async function SettingsPage() {
 
                 <div className="rounded-[28px] border border-[color:var(--color-border)] bg-white/80 p-5">
                   <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
+                    Color system
+                  </p>
+                  <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="brandPrimaryColor">Primary color</Label>
+                      <Input
+                        id="brandPrimaryColor"
+                        name="brandPrimaryColor"
+                        type="color"
+                        defaultValue={organization.brand_primary_color ?? "#443730"}
+                      />
+                      <FieldError name="brandPrimaryColor" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="brandAccentColor">Accent color</Label>
+                      <Input
+                        id="brandAccentColor"
+                        name="brandAccentColor"
+                        type="color"
+                        defaultValue={organization.brand_accent_color ?? "#786452"}
+                      />
+                      <FieldError name="brandAccentColor" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="brandSurfaceColor">Soft background</Label>
+                      <Input
+                        id="brandSurfaceColor"
+                        name="brandSurfaceColor"
+                        type="color"
+                        defaultValue={organization.brand_surface_color ?? "#eaf7cf"}
+                      />
+                      <FieldError name="brandSurfaceColor" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="brandAltColor">Alt background</Label>
+                      <Input
+                        id="brandAltColor"
+                        name="brandAltColor"
+                        type="color"
+                        defaultValue={organization.brand_alt_color ?? "#e6fdff"}
+                      />
+                      <FieldError name="brandAltColor" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-[28px] border border-[color:var(--color-border)] bg-white/80 p-5 md:col-span-2">
+                  <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
                     Contact presence
                   </p>
-                  <div className="mt-4 grid gap-4">
+                  <div className="mt-4 grid gap-4 md:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="contactEmail">Contact email</Label>
                       <Input

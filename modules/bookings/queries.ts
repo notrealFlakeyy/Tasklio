@@ -7,7 +7,7 @@ import { businessDateBoundsToUtc, weekdayFromDate } from "@/lib/date-utils";
 
 export type DashboardBookingItem = Tables<"bookings"> & {
   customers:
-    | Pick<Tables<"customers">, "email" | "full_name" | "phone">
+    | Pick<Tables<"customers">, "email" | "full_name" | "phone" | "public_id">
     | null;
   services:
     | Pick<
@@ -27,7 +27,7 @@ export async function listBookingsForDashboard(
       `
         *,
         services(name, duration_minutes, currency, price_amount),
-        customers(full_name, email, phone)
+        customers(full_name, email, phone, public_id)
       `,
     )
     .eq("organization_id", organizationId)

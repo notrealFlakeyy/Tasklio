@@ -2,17 +2,22 @@
 
 import { redirect } from "next/navigation";
 
-import type { ActionState } from "@/lib/action-state";
 import { getServerEnv } from "@/lib/env";
+import {
+  createErrorActionState,
+  createSuccessActionState,
+  getFieldErrorsFromZodError,
+  type FormActionState,
+} from "@/lib/form-action-state";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { signInSchema, signUpSchema } from "@/lib/validation/auth";
 import { formDataValue, slugify } from "@/lib/utils";
 
 export async function signInAction(
-  _previousState: ActionState,
+  _previousState: FormActionState,
   formData: FormData,
-): Promise<ActionState> {
+): Promise<FormActionState> {
   const candidate = {
     email: formDataValue(formData.get("email")).trim().toLowerCase(),
     password: formDataValue(formData.get("password")),
@@ -21,20 +26,20 @@ export async function signInAction(
   const parsed = signInSchema.safeParse(candidate);
 
   if (!parsed.success) {
-    return {
-      message: parsed.error.issues[0]?.message ?? "Invalid sign-in details.",
-      status: "error",
-    };
+    return createErrorActionState(
+      parsed.error.issues[0]?.message ?? "Invalid sign-in details.",
+      getFieldErrorsFromZodError(parsed.error),
+    );
   }
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
 
   if (error) {
-    return {
-      message: error.message,
-      status: "error",
-    };
+    return createErrorActionState(error.message, {
+      email: error.message,
+      password: error.message,
+    });
   }
 
   const nextPath = formDataValue(formData.get("next"), "/dashboard");
@@ -43,9 +48,9 @@ export async function signInAction(
 }
 
 export async function signUpOwnerAction(
-  _previousState: ActionState,
+  _previousState: FormActionState,
   formData: FormData,
-): Promise<ActionState> {
+): Promise<FormActionState> {
   const organizationSlug = slugify(
     formDataValue(formData.get("organizationSlug")) ||
       formDataValue(formData.get("organizationName")),
@@ -63,10 +68,10 @@ export async function signUpOwnerAction(
   const parsed = signUpSchema.safeParse(candidate);
 
   if (!parsed.success) {
-    return {
-      message: parsed.error.issues[0]?.message ?? "Invalid sign-up details.",
-      status: "error",
-    };
+    return createErrorActionState(
+      parsed.error.issues[0]?.message ?? "Invalid sign-up details.",
+      getFieldErrorsFromZodError(parsed.error),
+    );
   }
 
   const admin = createAdminClient();
@@ -77,10 +82,9 @@ export async function signUpOwnerAction(
     .maybeSingle();
 
   if (existingOrganization) {
-    return {
-      message: "That business URL is already taken.",
-      status: "error",
-    };
+    return createErrorActionState("That ClientFlow URL is already taken.", {
+      organizationSlug: "That ClientFlow URL is already taken.",
+    });
   }
 
   const supabase = await createClient();
@@ -97,20 +101,17 @@ export async function signUpOwnerAction(
   });
 
   if (error) {
-    return {
-      message: error.message,
-      status: "error",
-    };
+    return createErrorActionState(error.message, {
+      email: error.message,
+    });
   }
 
   const userId = data.user?.id;
 
   if (!userId) {
-    return {
-      message:
-        "Account created, but Supabase did not return a user id. Please try signing in.",
-      status: "success",
-    };
+    return createSuccessActionState(
+      "Account created, but Supabase did not return a user id. Please try signing in.",
+    );
   }
 
   const { data: organization, error: organizationError } = await admin
@@ -126,12 +127,10 @@ export async function signUpOwnerAction(
     .single();
 
   if (organizationError || !organization) {
-    return {
-      message:
-        organizationError?.message ??
+    return createErrorActionState(
+      organizationError?.message ??
         "Account created, but business setup failed. Check the database logs before continuing.",
-      status: "error",
-    };
+    );
   }
 
   const { error: membershipError } = await admin.from("organization_members").insert({
@@ -141,11 +140,9 @@ export async function signUpOwnerAction(
   });
 
   if (membershipError) {
-    return {
-      message:
-        "Business created, but owner membership setup failed. Fix the membership row before continuing.",
-      status: "error",
-    };
+    return createErrorActionState(
+      "Business created, but owner membership setup failed. Fix the membership row before continuing.",
+    );
   }
 
   const { error: subscriptionError } = await admin
@@ -157,21 +154,18 @@ export async function signUpOwnerAction(
     });
 
   if (subscriptionError) {
-    return {
-      message:
-        "Owner account created, but the starter subscription stub failed. Review the billing tables before launch.",
-      status: "error",
-    };
+    return createErrorActionState(
+      "Owner account created, but the starter subscription stub failed. Review the billing tables before launch.",
+    );
   }
 
   if (data.session) {
     redirect("/dashboard");
   }
 
-  return {
-    message: "Account created. Check your inbox to verify your email, then sign in.",
-    status: "success",
-  };
+  return createSuccessActionState(
+    "Account created. Check your inbox to verify your email, then sign in to ClientFlow.",
+  );
 }
 
 export async function signOutAction() {

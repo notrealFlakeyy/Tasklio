@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const slugSchema = z
+const organizationSlugSchema = z
   .string()
   .min(3)
   .max(48)
@@ -15,7 +15,7 @@ export const signUpSchema = z.object({
   email: z.string().email(),
   fullName: z.string().min(2).max(120),
   organizationName: z.string().min(2).max(120),
-  organizationSlug: slugSchema,
+  organizationSlug: organizationSlugSchema,
   password: z.string().min(8).max(128),
   timezone: z.string().min(2).max(100),
 });

@@ -13,11 +13,27 @@ type RevealProps = {
 export function Reveal({ children, className, delay = 0 }: RevealProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(() =>
+    typeof window !== "undefined"
+      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      : false,
+  );
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updatePreference = (event: MediaQueryListEvent) => {
+      setPrefersReducedMotion(event.matches);
+    };
+
+    mediaQuery.addEventListener("change", updatePreference);
+
+    return () => mediaQuery.removeEventListener("change", updatePreference);
+  }, []);
 
   useEffect(() => {
     const node = ref.current;
 
-    if (!node) {
+    if (!node || prefersReducedMotion) {
       return;
     }
 
@@ -34,19 +50,19 @@ export function Reveal({ children, className, delay = 0 }: RevealProps) {
     observer.observe(node);
 
     return () => observer.disconnect();
-  }, []);
+  }, [prefersReducedMotion]);
 
   return (
     <div
       className={cn(
         "transition-[opacity,transform,filter] duration-700 ease-[cubic-bezier(0.21,1,0.32,1)] will-change-transform",
-        isVisible
+        isVisible || prefersReducedMotion
           ? "translate-y-0 opacity-100 blur-0"
           : "translate-y-6 opacity-0 blur-[2px]",
         className,
       )}
       ref={ref}
-      style={{ transitionDelay: `${delay}ms` }}
+      style={{ transitionDelay: prefersReducedMotion ? "0ms" : `${delay}ms` }}
     >
       {children}
     </div>

@@ -7,22 +7,28 @@
           "async": false,
           "exportedName": "signOutAction",
           "filename": "modules/auth/actions.ts"
+        },
+        "app/(dashboard)/dashboard/settings/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/dashboard/settings/page/actions.js { ACTIONS_MODULE0 => \"[project]/modules/auth/actions.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/modules/organizations/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+          "async": false,
+          "exportedName": "signOutAction",
+          "filename": "modules/auth/actions.ts"
         }
       },
       "filename": "modules/auth/actions.ts",
       "exportedName": "signOutAction"
     },
-    "602a03fefaa1b8fe374433c0e597632aaf0a8ddc8b": {
+    "6037a603140c2fd670184a305bc150054d72efac24": {
       "workers": {
-        "app/(auth)/auth/sign-in/page": {
-          "moduleId": "[project]/.next-internal/server/app/(auth)/auth/sign-in/page/actions.js { ACTIONS_MODULE0 => \"[project]/modules/auth/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
+        "app/(dashboard)/dashboard/settings/page": {
+          "moduleId": "[project]/.next-internal/server/app/(dashboard)/dashboard/settings/page/actions.js { ACTIONS_MODULE0 => \"[project]/modules/auth/actions.ts [app-rsc] (ecmascript)\", ACTIONS_MODULE1 => \"[project]/modules/organizations/actions.ts [app-rsc] (ecmascript)\" } [app-rsc] (server actions loader, ecmascript)",
           "async": false,
-          "exportedName": "signInAction",
-          "filename": "modules/auth/actions.ts"
+          "exportedName": "updateOrganizationSettingsAction",
+          "filename": "modules/organizations/actions.ts"
         }
       },
-      "filename": "modules/auth/actions.ts",
-      "exportedName": "signInAction"
+      "filename": "modules/organizations/actions.ts",
+      "exportedName": "updateOrganizationSettingsAction"
     }
   },
   "edge": {},

@@ -43,7 +43,7 @@ function ToastCard({
   return (
     <div
       className={cn(
-        "pointer-events-auto w-full max-w-sm rounded-[24px] border px-4 py-4 shadow-[0_20px_45px_rgba(68,55,48,0.12)] backdrop-blur-sm transition",
+        "toast-enter pointer-events-auto w-full max-w-sm rounded-[24px] border px-4 py-4 shadow-[0_20px_45px_rgba(68,55,48,0.12)] backdrop-blur-sm transition",
         toastToneClassName(tone),
       )}
       role="status"

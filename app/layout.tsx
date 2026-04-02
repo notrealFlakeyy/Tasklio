@@ -15,9 +15,14 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "Booking SaaS MVP Starter",
+  title: "ClientFlow",
   description:
-    "Production-ready booking MVP scaffold with Next.js, Supabase, and scalable multi-tenant foundations.",
+    "ClientFlow is a premium booking and client operations app for service businesses, built with Next.js and Supabase.",
+  icons: {
+    icon: "/branding/clientflow_logo_black.png",
+    shortcut: "/branding/clientflow_logo_black.png",
+    apple: "/branding/clientflow_logo_black.png",
+  },
 };
 
 export default function RootLayout({
