@@ -3,7 +3,7 @@ returns text
 language sql
 volatile
 as $$
-  select lower(prefix) || '_' || lower(encode(gen_random_bytes(6), 'hex'));
+  select lower(prefix) || '_' || substr(md5(random()::text || clock_timestamp()::text || prefix), 1, 12);
 $$;
 
 alter table public.organizations

@@ -36,9 +36,9 @@ export function AuthSignInForm({ next }: AuthSignInFormProps) {
       <SubmitButton pendingLabel="Signing in...">Sign in</SubmitButton>
 
       <p className="text-sm text-[var(--color-muted)]">
-        No account yet?{" "}
+        New here?{" "}
         <Link className="font-semibold text-[var(--color-brand)]" href="/auth/sign-up">
-          Create a ClientFlow workspace
+          Create your workspace
         </Link>
       </p>
     </ActionForm>

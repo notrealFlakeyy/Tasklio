@@ -32,11 +32,11 @@ export default async function SettingsPage() {
           <div className="max-w-3xl">
             <p className="editorial-kicker">Business profile</p>
             <h1 className="mt-4 text-4xl font-semibold tracking-tight md:text-5xl">
-              Keep the public booking experience aligned with the business.
+              Keep your business details clear and up to date.
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-8 text-[var(--color-muted)] md:text-lg">
-              This page now focuses on the essentials: business identity, booking-page
-              branding, contact details, and the scheduling rules that shape live slots.
+              This page controls the name, contact details, colors, and booking-page text
+              people see before they book.
             </p>
           </div>
 
@@ -47,7 +47,7 @@ export default async function SettingsPage() {
               </p>
               <CardTitle className="mt-3 text-2xl">{organization.name}</CardTitle>
               <CardDescription className="mt-2">
-                The name customers see on the booking page and in notifications.
+                The name shown on the booking page and in messages.
               </CardDescription>
             </Card>
             <Card className="bg-white/74">
@@ -83,7 +83,9 @@ export default async function SettingsPage() {
               <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
                 Booking-page branding
               </p>
-              <CardTitle className="mt-3 text-2xl">{branding.tagline}</CardTitle>
+              <CardTitle className="mt-3 text-2xl">
+                {branding.tagline || "Simple booking page"}
+              </CardTitle>
               <CardDescription className="mt-2">
                 Logo, colors, headline, and description for the public booking flow.
               </CardDescription>
@@ -95,11 +97,9 @@ export default async function SettingsPage() {
       <div className="grid gap-6 xl:grid-cols-[0.84fr,1.16fr]">
         <SpotlightPanel className="p-6 md:p-8">
           <p className="editorial-kicker">Live booking preview</p>
-          <CardTitle className="mt-3 text-3xl">One polished public page is enough for the MVP.</CardTitle>
+          <CardTitle className="mt-3 text-3xl">Preview your booking page.</CardTitle>
           <CardDescription className="mt-3 max-w-xl">
-            Instead of splitting attention across a separate mini-site, ClientFlow now
-            keeps the public experience focused on one branded booking page that feels
-            warm, clear, and trustworthy.
+            You only need one public booking page. Keep it clear, friendly, and easy to trust.
           </CardDescription>
 
           <div className="mt-6 grid gap-4">
@@ -122,7 +122,7 @@ export default async function SettingsPage() {
                   ) : null}
                   <div>
                     <p className="text-sm font-semibold text-[var(--color-brand-strong)]">
-                      {branding.tagline}
+                      {branding.tagline || organization.name}
                     </p>
                     <p className="mt-1 text-xs text-[var(--color-muted)]">
                       /book/{organization.slug}
@@ -146,7 +146,7 @@ export default async function SettingsPage() {
                   </p>
                   <CardTitle className="mt-3 text-2xl">Open the booking page</CardTitle>
                   <CardDescription className="mt-2 max-w-md">
-                    Review exactly what customers see before you share the link with testers.
+                    Open this page before sharing it.
                   </CardDescription>
                 </div>
                 <Link href={`/book/${organization.slug}`} target="_blank">
@@ -165,10 +165,9 @@ export default async function SettingsPage() {
             <div className="grid gap-6">
               <div>
                 <p className="editorial-kicker">Edit organization</p>
-                <CardTitle className="mt-3 text-3xl">Keep the essentials clean and accurate.</CardTitle>
+                <CardTitle className="mt-3 text-3xl">Keep the important details accurate.</CardTitle>
                 <CardDescription className="mt-3 max-w-2xl">
-                  These settings shape the customer-facing booking page and the scheduling
-                  rules behind it, without introducing extra public-site complexity.
+                  These settings control your public booking page and a few simple booking rules.
                 </CardDescription>
               </div>
 
@@ -216,7 +215,7 @@ export default async function SettingsPage() {
                       />
                       <FieldError name="brandLogoUrl" />
                       <p className="text-sm leading-6 text-[var(--color-muted)]">
-                        Use a public image URL for now. Later we can move this to Supabase Storage uploads.
+                        Use a public image URL for now.
                       </p>
                     </div>
                     <div className="space-y-2">
@@ -225,7 +224,7 @@ export default async function SettingsPage() {
                         id="publicTagline"
                         name="publicTagline"
                         defaultValue={organization.public_tagline ?? ""}
-                        placeholder="Book with confidence"
+                        placeholder="Optional short line"
                       />
                       <FieldError name="publicTagline" />
                     </div>
@@ -245,7 +244,7 @@ export default async function SettingsPage() {
                         id="publicDescription"
                         name="publicDescription"
                         defaultValue={organization.public_description ?? ""}
-                        placeholder="Introduce the business in a way that feels human, clear, and premium before the client chooses a service."
+                        placeholder="A short description shown before someone chooses a service"
                       />
                       <FieldError name="publicDescription" />
                     </div>

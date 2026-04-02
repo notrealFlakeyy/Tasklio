@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { CheckCircle2 } from "lucide-react";
+
 import { ClientFlowLogo } from "@/components/clientflow-logo";
 import { AuthSignInForm } from "@/components/forms/auth-sign-in-form";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
@@ -15,24 +18,39 @@ export default async function SignInPage({
       <div className="grid w-full gap-6 lg:grid-cols-[0.95fr,1.05fr]">
         <SpotlightPanel className="p-8 md:p-10">
           <div className="space-y-5">
-            <ClientFlowLogo imageClassName="border border-[color:var(--color-border)] bg-white/84 p-2 shadow-[var(--shadow-soft)]" />
+            <Link href="/">
+              <ClientFlowLogo size={88} withWordmark />
+            </Link>
             <p className="editorial-kicker">Owner access</p>
             <h1 className="text-balance text-4xl leading-tight font-semibold md:text-5xl">
-              Sign back into ClientFlow and step into bookings, clients, and the day.
+              Sign in and open your booking dashboard.
             </h1>
             <p className="max-w-xl text-lg leading-8 text-[var(--color-muted)]">
-              Auth stays SSR-safe and protected, while the interface keeps the entry
-              experience warm and editorial instead of flat and mechanical.
+              Keep your services, working hours, and bookings in one simple place.
             </p>
+            <div className="grid gap-3">
+              {[
+                "Check new bookings quickly",
+                "Update services and prices",
+                "Change your working hours when needed",
+              ].map((item) => (
+                <div
+                  className="flex items-start gap-3 rounded-[22px] border border-[color:var(--color-border)] bg-white/78 p-4"
+                  key={item}
+                >
+                  <CheckCircle2 className="mt-0.5 size-4 text-[var(--color-brand)]" />
+                  <p className="text-sm leading-7 text-[var(--color-muted)]">{item}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </SpotlightPanel>
 
         <Card className="w-full space-y-6 p-8 md:p-10">
           <div className="space-y-2">
-            <ClientFlowLogo className="mb-3" imageClassName="border border-[color:var(--color-border)] bg-white/84 p-2" size={44} />
             <CardTitle className="text-3xl">Sign in</CardTitle>
             <CardDescription>
-              ClientFlow is protected by Supabase SSR cookies and the route proxy layer.
+              Enter your details to open your workspace.
             </CardDescription>
           </div>
           <AuthSignInForm next={next} />

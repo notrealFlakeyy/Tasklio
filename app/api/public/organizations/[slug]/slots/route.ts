@@ -4,7 +4,7 @@ import type { Tables } from "@/lib/database.types";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { slotQuerySchema } from "@/lib/validation/bookings";
 import { getPublicAvailabilityContext } from "@/modules/bookings/queries";
-import { getBookableSlots } from "@/modules/bookings/slots";
+import { getCalendarSlots } from "@/modules/bookings/slots";
 import { getPublicOrganizationBySlug } from "@/modules/organizations/queries";
 
 export async function GET(
@@ -56,7 +56,7 @@ export async function GET(
     return NextResponse.json({ slots: [] });
   }
 
-  const slots = getBookableSlots({
+  const slots = getCalendarSlots({
     date: parsed.data.date,
     existingBookings: availability.bookings,
     noticeHours: organization.booking_notice_hours,

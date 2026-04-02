@@ -81,7 +81,7 @@ export function getOrganizationBranding(
     logoUrl: trimOrNull(organization.brand_logo_url) ?? "/branding/clientflow_logo_black.png",
     primaryColor,
     surfaceColor,
-    tagline: trimOrNull(organization.public_tagline) ?? "Book with confidence",
+    tagline: trimOrNull(organization.public_tagline) ?? "",
   };
 }
 

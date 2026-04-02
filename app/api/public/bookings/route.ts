@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         fieldErrors: getFieldErrorsFromZodError(parsed.error),
-        message: parsed.error.issues[0]?.message ?? "Invalid booking payload.",
+        message: parsed.error.issues[0]?.message ?? "Please check the booking details.",
       },
       { status: 400 },
     );
@@ -59,9 +59,13 @@ export async function POST(request: Request) {
 
   if (error) {
     const status = error.message.toLowerCase().includes("slot") ? 409 : 400;
+    const message =
+      error.message === "Selected slot is no longer available"
+        ? "That time was just booked by someone else. Please choose another time."
+        : error.message || "Unable to create booking.";
 
     return NextResponse.json(
-      { message: error.message || "Unable to create booking." },
+      { message },
       { status },
     );
   }

@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 
 import { getServerEnv } from "@/lib/env";
+import { DEFAULT_WEEKLY_HOURS } from "@/lib/constants";
 import {
   createErrorActionState,
   createSuccessActionState,
@@ -12,6 +13,7 @@ import {
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { signInSchema, signUpSchema } from "@/lib/validation/auth";
+import { parseTimeInputToMinutes } from "@/lib/date-utils";
 import { formDataValue, slugify } from "@/lib/utils";
 
 export async function signInAction(
@@ -143,6 +145,27 @@ export async function signUpOwnerAction(
     return createErrorActionState(
       "Business created, but owner membership setup failed. Fix the membership row before continuing.",
     );
+  }
+
+  const defaultAvailabilityRules = DEFAULT_WEEKLY_HOURS.filter((day) => day.enabled).map(
+    (day) => ({
+      end_minute: parseTimeInputToMinutes(day.endTime),
+      organization_id: organization.id,
+      start_minute: parseTimeInputToMinutes(day.startTime),
+      weekday: day.weekday,
+    }),
+  );
+
+  if (defaultAvailabilityRules.length > 0) {
+    const { error: availabilityError } = await admin
+      .from("availability_rules")
+      .insert(defaultAvailabilityRules);
+
+    if (availabilityError) {
+      return createErrorActionState(
+        "Owner account created, but default working hours could not be created.",
+      );
+    }
   }
 
   const { error: subscriptionError } = await admin

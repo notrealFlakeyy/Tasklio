@@ -9,22 +9,21 @@ export const DAYS_OF_WEEK = [
 ] as const;
 
 export const DEFAULT_WEEKLY_HOURS = [
-  { weekday: 0, enabled: false, startTime: "09:00", endTime: "17:00" },
-  { weekday: 1, enabled: true, startTime: "09:00", endTime: "17:00" },
-  { weekday: 2, enabled: true, startTime: "09:00", endTime: "17:00" },
-  { weekday: 3, enabled: true, startTime: "09:00", endTime: "17:00" },
-  { weekday: 4, enabled: true, startTime: "09:00", endTime: "17:00" },
-  { weekday: 5, enabled: true, startTime: "09:00", endTime: "17:00" },
-  { weekday: 6, enabled: false, startTime: "09:00", endTime: "17:00" },
+  { weekday: 0, enabled: false, startTime: "08:00", endTime: "16:00" },
+  { weekday: 1, enabled: true, startTime: "08:00", endTime: "16:00" },
+  { weekday: 2, enabled: true, startTime: "08:00", endTime: "16:00" },
+  { weekday: 3, enabled: true, startTime: "08:00", endTime: "16:00" },
+  { weekday: 4, enabled: true, startTime: "08:00", endTime: "16:00" },
+  { weekday: 5, enabled: true, startTime: "08:00", endTime: "16:00" },
+  { weekday: 6, enabled: false, startTime: "08:00", endTime: "16:00" },
 ] as const;
 
 export const DASHBOARD_NAV_ITEMS = [
-  { href: "/dashboard", label: "Overview" },
-  { href: "/dashboard/customers", label: "Customers" },
+  { href: "/dashboard", label: "Home" },
   { href: "/dashboard/services", label: "Services" },
-  { href: "/dashboard/availability", label: "Availability" },
-  { href: "/dashboard/bookings", label: "Bookings" },
-  { href: "/dashboard/settings", label: "Settings" },
+  { href: "/dashboard/availability", label: "Hours" },
+  { href: "/dashboard/bookings", label: "Calendar" },
+  { href: "/dashboard/settings", label: "Business" },
 ] as const;
 
 export const CUSTOMER_STATUS_OPTIONS = [

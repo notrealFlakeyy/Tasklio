@@ -22,11 +22,12 @@ type SlotInput = {
 
 export type GeneratedSlot = {
   endsAt: string;
+  isAvailable: boolean;
   label: string;
   startsAt: string;
 };
 
-export function getBookableSlots(input: SlotInput): GeneratedSlot[] {
+export function getCalendarSlots(input: SlotInput): GeneratedSlot[] {
   const now = input.now ?? new Date();
   const noticeCutoff = addHours(now, input.noticeHours);
   const slots: GeneratedSlot[] = [];
@@ -74,17 +75,23 @@ export function getBookableSlots(input: SlotInput): GeneratedSlot[] {
         );
       });
 
-      if (!overlapsTimeOff && !overlapsBooking && !isBefore(current, noticeCutoff)) {
-        slots.push({
-          endsAt: serviceEnd.toISOString(),
-          label: formatInTimeZone(current, input.timezone, "HH:mm"),
-          startsAt: current.toISOString(),
-        });
-      }
+      const isAvailable =
+        !overlapsTimeOff && !overlapsBooking && !isBefore(current, noticeCutoff);
+
+      slots.push({
+        endsAt: serviceEnd.toISOString(),
+        isAvailable,
+        label: formatInTimeZone(current, input.timezone, "HH:mm"),
+        startsAt: current.toISOString(),
+      });
 
       current = addMinutes(current, input.slotIntervalMinutes);
     }
   }
 
   return slots;
+}
+
+export function getBookableSlots(input: SlotInput): GeneratedSlot[] {
+  return getCalendarSlots(input).filter((slot) => slot.isAvailable);
 }

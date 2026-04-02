@@ -45,5 +45,5 @@ Production-ready booking MVP scaffold built with:
 4. Add at least one service and publish weekly availability.
 5. Open `/book/[slug]` and complete one real test booking.
 6. Confirm and cancel bookings from the dashboard once each.
-7. Review the customer record created from that booking.
+7. Review the booking details created from that booking.
 8. Share the product with a small group of friendly testers before opening it wider.

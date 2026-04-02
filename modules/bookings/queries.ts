@@ -1,9 +1,14 @@
 import "server-only";
 
+import { DEFAULT_WEEKLY_HOURS } from "@/lib/constants";
 import type { Tables } from "@/lib/database.types";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
-import { businessDateBoundsToUtc, weekdayFromDate } from "@/lib/date-utils";
+import {
+  businessDateBoundsToUtc,
+  parseTimeInputToMinutes,
+  weekdayFromDate,
+} from "@/lib/date-utils";
 
 export type DashboardBookingItem = Tables<"bookings"> & {
   customers:
@@ -57,7 +62,7 @@ export async function getPublicAvailabilityContext(
   const weekday = weekdayFromDate(date);
   const { nextDay, start } = businessDateBoundsToUtc(date, timezone);
 
-  const [rulesResult, blockedDateResult, timeOffResult, bookingsResult] =
+  const [rulesResult, allRulesResult, blockedDateResult, timeOffResult, bookingsResult] =
     await Promise.all([
       supabase
         .from("availability_rules")
@@ -66,6 +71,11 @@ export async function getPublicAvailabilityContext(
         .eq("weekday", weekday)
         .eq("is_active", true)
         .order("start_minute", { ascending: true }),
+      supabase
+        .from("availability_rules")
+        .select("weekday", { count: "exact", head: true })
+        .eq("organization_id", organizationId)
+        .eq("is_active", true),
       supabase
         .from("blocked_dates")
         .select("id")
@@ -87,16 +97,34 @@ export async function getPublicAvailabilityContext(
         .in("status", ["pending", "confirmed"]),
     ]);
 
+  const savedRulesCount = allRulesResult.count ?? 0;
+  const fallbackRule = DEFAULT_WEEKLY_HOURS.find((item) => item.weekday === weekday);
+  const fallbackRules =
+    savedRulesCount === 0 && fallbackRule?.enabled
+      ? [
+          {
+            end_minute: parseTimeInputToMinutes(fallbackRule.endTime),
+            start_minute: parseTimeInputToMinutes(fallbackRule.startTime),
+          },
+        ]
+      : [];
+  const rules = ((rulesResult.data ?? []) as Pick<
+    Tables<"availability_rules">,
+    "end_minute" | "start_minute"
+  >[]).length
+    ? ((rulesResult.data ?? []) as Pick<
+        Tables<"availability_rules">,
+        "end_minute" | "start_minute"
+      >[])
+    : fallbackRules;
+
   return {
     blockedDate: blockedDateResult.data,
     bookings: (bookingsResult.data ?? []) as Pick<
       Tables<"bookings">,
       "buffer_minutes" | "ends_at" | "starts_at" | "status"
     >[],
-    rules: (rulesResult.data ?? []) as Pick<
-      Tables<"availability_rules">,
-      "end_minute" | "start_minute"
-    >[],
+    rules,
     timeOffPeriods: (timeOffResult.data ?? []) as Pick<
       Tables<"time_off_periods">,
       "ends_at" | "starts_at"

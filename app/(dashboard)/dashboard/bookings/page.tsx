@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { ActionForm } from "@/components/forms/action-form";
 import { DestructiveActionDialog } from "@/components/forms/destructive-action-dialog";
 import { FieldError } from "@/components/forms/field-error";
@@ -56,14 +54,13 @@ export default async function BookingsPage() {
         <div className="ambient-orb absolute bottom-0 left-10 h-40 w-40 rounded-full bg-[radial-gradient(circle,rgba(120,100,82,0.12),transparent_70%)]" />
         <div className="relative grid gap-8 xl:grid-cols-[1.05fr,0.95fr]">
           <div className="max-w-3xl">
-            <p className="editorial-kicker">Booking operations</p>
+            <p className="editorial-kicker">Calendar</p>
             <h1 className="mt-4 text-4xl font-semibold tracking-tight md:text-5xl">
-              Run the live schedule like a real client pipeline.
+              See what is booked and what still needs your attention.
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-8 text-[var(--color-muted)] md:text-lg">
-              Every appointment is now tied to customer context, pricing history,
-              and operational notes. Confirmation and cancellation remain explicit
-              owner actions, while overlap protection stays enforced by Postgres.
+              Keep the day-to-day simple. Confirm new bookings, cancel when needed,
+              and keep a few private notes for yourself.
             </p>
           </div>
 
@@ -74,7 +71,7 @@ export default async function BookingsPage() {
               </p>
               <CardTitle className="mt-3 text-3xl">{bookings.length}</CardTitle>
               <CardDescription className="mt-2">
-                Upcoming and historical appointments together.
+                Everything booked so far.
               </CardDescription>
             </Card>
             <Card className="bg-white/74">
@@ -83,7 +80,7 @@ export default async function BookingsPage() {
               </p>
               <CardTitle className="mt-3 text-3xl">{upcomingBookings.length}</CardTitle>
               <CardDescription className="mt-2">
-                Active calendar commitments ahead.
+                Appointments still ahead.
               </CardDescription>
             </Card>
             <Card className="bg-white/74">
@@ -92,18 +89,16 @@ export default async function BookingsPage() {
               </p>
               <CardTitle className="mt-3 text-3xl">{pendingBookings.length}</CardTitle>
               <CardDescription className="mt-2">
-                Waiting for owner confirmation.
+                Waiting for your confirmation.
               </CardDescription>
             </Card>
             <Card className="bg-white/74">
               <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
-                Booked revenue
+                Done
               </p>
-              <CardTitle className="mt-3 text-3xl">
-                {formatCurrency(bookedRevenue)}
-              </CardTitle>
+              <CardTitle className="mt-3 text-3xl">{completedBookings.length}</CardTitle>
               <CardDescription className="mt-2">
-                Based on booking-time service price snapshots.
+                Completed appointments.
               </CardDescription>
             </Card>
           </div>
@@ -112,11 +107,11 @@ export default async function BookingsPage() {
 
       <div className="grid gap-6 xl:grid-cols-[0.8fr,1.2fr]">
         <SpotlightPanel className="p-6 md:p-8">
-          <p className="editorial-kicker">Operations view</p>
-          <CardTitle className="mt-3 text-3xl">What needs attention today</CardTitle>
+          <p className="editorial-kicker">Simple overview</p>
+          <CardTitle className="mt-3 text-3xl">What to check today</CardTitle>
           <CardDescription className="mt-3 max-w-xl">
-            This page stays deliberately action-oriented: confirm new demand, cancel
-            when needed, and keep internal prep notes close to each appointment.
+            Most days, you only need to look at new bookings, your next appointments,
+            and your local timezone.
           </CardDescription>
 
           <div className="mt-6 grid gap-4">
@@ -126,7 +121,7 @@ export default async function BookingsPage() {
               </p>
               <CardTitle className="mt-3 text-2xl">{completedBookings.length}</CardTitle>
               <CardDescription className="mt-2">
-                Finished sessions now feeding customer history.
+                Appointments already completed.
               </CardDescription>
             </Card>
             <Card className="bg-white/74">
@@ -135,17 +130,16 @@ export default async function BookingsPage() {
               </p>
               <CardTitle className="mt-3 text-2xl">{organization.timezone}</CardTitle>
               <CardDescription className="mt-2">
-                Every appointment is shown here in the business&apos;s local time.
+                All appointments are shown in your local business time.
               </CardDescription>
             </Card>
             <Card className="bg-white/74">
               <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
-                Workflow note
+                Booked value
               </p>
-              <CardDescription className="mt-3">
-                For the MVP, revenue means booked value, not settled cash. When
-                payments arrive later, this view can split booked, paid, refunded,
-                and no-show outcomes without changing the booking core.
+              <CardTitle className="mt-3 text-2xl">{formatCurrency(bookedRevenue)}</CardTitle>
+              <CardDescription className="mt-2">
+                Total value of all bookings except cancelled ones.
               </CardDescription>
             </Card>
           </div>
@@ -209,15 +203,6 @@ export default async function BookingsPage() {
                     </div>
 
                     <div className="flex flex-wrap gap-2">
-                      {booking.customers?.public_id ? (
-                        <Link href={`/dashboard/customers/${booking.customers.public_id}`}>
-                          <Button variant="secondary">Open customer</Button>
-                        </Link>
-                      ) : (
-                        <Button disabled variant="secondary">
-                          No profile yet
-                        </Button>
-                      )}
                       {booking.status === "pending" ? (
                         <ActionForm action={confirmBookingAction}>
                           <input name="bookingId" type="hidden" value={booking.id} />
@@ -242,13 +227,13 @@ export default async function BookingsPage() {
                   <div className="mt-6 grid gap-5 lg:grid-cols-[0.92fr,1.08fr]">
                     <div className="rounded-[28px] border border-[color:var(--color-border)] bg-[linear-gradient(180deg,rgba(255,255,255,0.86),rgba(255,255,255,0.7))] p-5">
                       <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
-                        Customer details
+                        Booking details
                       </p>
                       <div className="mt-4 space-y-2 text-sm leading-7 text-[var(--color-muted)]">
                         <p>{booking.customer_email ?? "No email provided"}</p>
                         <p>{booking.customer_phone ?? "No phone provided"}</p>
                         <p className="pt-2 text-[var(--color-ink)]">
-                          {booking.customer_notes ?? "No customer notes."}
+                          {booking.customer_notes ?? "No notes added with this booking."}
                         </p>
                       </div>
                     </div>
@@ -261,14 +246,14 @@ export default async function BookingsPage() {
                             Internal notes
                           </p>
                           <p className="mt-2 text-sm text-[var(--color-muted)]">
-                            Keep prep, follow-up, and context close to the booking.
+                            Private notes for yourself.
                           </p>
                         </div>
                       </div>
                       <Textarea
                         name="internalNotes"
                         defaultValue={booking.internal_notes ?? ""}
-                        placeholder="Preparation notes, reminders, follow-up context..."
+                        placeholder="Anything you want to remember about this booking"
                       />
                       <FieldError name="internalNotes" />
                       <FormNotice successLabel="Saved." />
@@ -282,7 +267,7 @@ export default async function BookingsPage() {
             })
           ) : (
             <EmptyState
-              description="Once your public page is shared and services are live, appointments will start flowing into this operating view."
+              description="Once bookings start coming in, appointments will show here."
               title="No bookings yet"
             />
           )}

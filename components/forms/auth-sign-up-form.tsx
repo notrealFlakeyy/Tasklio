@@ -40,13 +40,12 @@ export function AuthSignUpForm({ defaultTimezone }: AuthSignUpFormProps) {
           <FieldError name="organizationName" />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="organizationSlug">Public URL slug</Label>
-          <Input
-            id="organizationSlug"
-            name="organizationSlug"
-            placeholder="clientflow-demo"
-          />
+          <Label htmlFor="organizationSlug">Booking page name</Label>
+          <Input id="organizationSlug" name="organizationSlug" placeholder="Optional" />
           <FieldError name="organizationSlug" />
+          <p className="text-sm leading-6 text-[var(--color-muted)]">
+            Leave this blank and we will create it from your business name.
+          </p>
         </div>
       </div>
 
@@ -55,17 +54,23 @@ export function AuthSignUpForm({ defaultTimezone }: AuthSignUpFormProps) {
           <Label htmlFor="timezone">Business timezone</Label>
           <Input id="timezone" name="timezone" required defaultValue={defaultTimezone} />
           <FieldError name="timezone" />
+          <p className="text-sm leading-6 text-[var(--color-muted)]">
+            If you are unsure, leave this as it is.
+          </p>
         </div>
         <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
           <Input id="password" minLength={8} name="password" required type="password" />
           <FieldError name="password" />
+          <p className="text-sm leading-6 text-[var(--color-muted)]">
+            Use at least 8 characters.
+          </p>
         </div>
       </div>
 
       <FormNotice successLabel="Almost there." />
 
-      <SubmitButton pendingLabel="Creating account...">Create ClientFlow workspace</SubmitButton>
+      <SubmitButton pendingLabel="Creating workspace...">Create workspace</SubmitButton>
     </ActionForm>
   );
 }

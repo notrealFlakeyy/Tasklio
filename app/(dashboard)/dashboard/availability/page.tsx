@@ -4,7 +4,6 @@ import { FieldError } from "@/components/forms/field-error";
 import { FormNotice } from "@/components/forms/form-notice";
 import { SubmitButton } from "@/components/forms/submit-button";
 import { SpotlightPanel } from "@/components/ui/spotlight-panel";
-import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
@@ -44,6 +43,7 @@ export default async function AvailabilityPage() {
   const activeDays = weeklyRows.filter((row) => row.enabled).length;
   const nextBlockedDate = availability.blockedDates[0]?.blocked_on ?? null;
   const nextTimeOff = availability.timeOffPeriods[0]?.starts_at ?? null;
+  const hasSavedWeeklyHours = availability.rules.length > 0;
 
   return (
     <div className="space-y-6">
@@ -52,14 +52,13 @@ export default async function AvailabilityPage() {
         <div className="ambient-orb absolute bottom-0 left-0 h-48 w-48 rounded-full bg-[radial-gradient(circle,rgba(120,100,82,0.14),transparent_72%)]" />
         <div className="relative grid gap-8 xl:grid-cols-[1.15fr,0.85fr]">
           <div className="max-w-3xl">
-            <p className="editorial-kicker">Availability engine</p>
+            <p className="editorial-kicker">Working hours</p>
             <h1 className="mt-4 text-4xl font-semibold tracking-tight md:text-5xl">
-              Shape a weekly rhythm that still leaves room for real life.
+              Choose when people can book with you.
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-8 text-[var(--color-muted)] md:text-lg">
-              Your public slots are generated from working hours, timed absences,
-              and full-day closures. This screen controls the operating cadence your
-              customers feel on the outside.
+              Set your normal working hours first. Then add full days off or shorter
+              time-off blocks when you need them.
             </p>
           </div>
 
@@ -70,7 +69,7 @@ export default async function AvailabilityPage() {
               </p>
               <CardTitle className="mt-3 text-3xl">{activeDays}</CardTitle>
               <CardDescription className="mt-2">
-                Days currently open for new bookings.
+                Days currently open for bookings.
               </CardDescription>
             </Card>
             <Card className="bg-white/72">
@@ -103,7 +102,7 @@ export default async function AvailabilityPage() {
               </p>
               <CardTitle className="mt-3 text-2xl">{organization.timezone}</CardTitle>
               <CardDescription className="mt-2">
-                All slots render locally here while storage stays in UTC.
+                All times are shown in your local business timezone.
               </CardDescription>
             </Card>
           </div>
@@ -113,20 +112,33 @@ export default async function AvailabilityPage() {
       <SpotlightPanel className="p-6 md:p-8">
         <div className="flex flex-wrap items-start justify-between gap-5">
           <div className="max-w-2xl">
-            <p className="editorial-kicker">Weekly schedule</p>
+            <p className="editorial-kicker">Weekly hours</p>
             <CardTitle className="mt-3 text-3xl md:text-[2rem]">
-              Set the baseline hours your booking flow can trust.
+              Set your regular opening hours.
             </CardTitle>
             <CardDescription className="mt-3 max-w-2xl">
-              Each weekday stores a start and end minute range. That keeps slot
-              generation deterministic and makes timezone handling much easier to
-              scale later when you add staff, resources, or multiple locations.
+              These are the hours shown on your booking page.
             </CardDescription>
           </div>
           <div className="rounded-[26px] border border-[color:var(--color-border)] bg-white/78 px-5 py-4 text-sm text-[var(--color-muted)] shadow-[0_14px_35px_rgba(68,55,48,0.08)]">
-            Start with one clear working rhythm, then layer exceptions below.
+            Keep this simple. Start with your normal week, then add exceptions below.
           </div>
         </div>
+
+        {!hasSavedWeeklyHours ? (
+          <div className="mt-6 rounded-[24px] border border-[color:rgba(120,100,82,0.18)] bg-[var(--background-soft)]/55 p-5">
+            <p className="text-sm font-semibold text-[var(--color-brand-strong)]">
+              Your hours are not active yet
+            </p>
+            <p className="mt-2 text-sm leading-7 text-[var(--color-muted)]">
+              The times below are just suggested starting values. Click
+              {" "}
+              <span className="font-semibold text-[var(--color-ink)]">Save weekly hours</span>
+              {" "}
+              to make your booking page show available days.
+            </p>
+          </div>
+        ) : null}
 
         <ActionForm action={saveWeeklyAvailabilityAction} className="mt-8 space-y-4">
           {weeklyRows.map(({ day, enabled, startTime, endTime }) => (
@@ -137,7 +149,7 @@ export default async function AvailabilityPage() {
               <div>
                 <p className="text-base font-semibold text-[var(--color-ink)]">{day.label}</p>
                 <p className="mt-1 text-sm text-[var(--color-muted)]">
-                  {enabled ? "Open for bookings" : "Currently closed"}
+                  {enabled ? "Open for bookings" : "Closed"}
                 </p>
               </div>
 
@@ -184,11 +196,10 @@ export default async function AvailabilityPage() {
           <div className="grid gap-6 lg:grid-cols-[0.9fr,1.1fr]">
             <div className="space-y-4">
               <div>
-                <p className="editorial-kicker">Calendar closures</p>
+                <p className="editorial-kicker">Full days off</p>
                 <CardTitle className="mt-3 text-3xl">Blocked dates</CardTitle>
                 <CardDescription className="mt-3">
-                  Reserve full days for holidays, travel, retreats, or seasonal
-                  pauses without editing the weekly schedule itself.
+                  Use this for holidays, travel, or any full day when you are not working.
                 </CardDescription>
               </div>
 
@@ -200,7 +211,7 @@ export default async function AvailabilityPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="blockedReason">Reason</Label>
-                  <Input id="blockedReason" name="reason" placeholder="Holiday or travel day" />
+                  <Input id="blockedReason" name="reason" placeholder="Holiday or day off" />
                   <FieldError name="reason" />
                 </div>
                 <FormNotice successLabel="Saved." />
@@ -238,7 +249,7 @@ export default async function AvailabilityPage() {
               ) : (
                 <EmptyState
                   className="bg-white/72"
-                  description="Add dates here when the whole business should disappear from the public booking flow."
+                  description="Add a date here when you do not want any bookings on that day."
                   title="No blocked dates scheduled"
                 />
               )}
@@ -250,11 +261,10 @@ export default async function AvailabilityPage() {
           <div className="grid gap-6 lg:grid-cols-[0.9fr,1.1fr]">
             <div className="space-y-4">
               <div>
-                <p className="editorial-kicker">Partial-day control</p>
+                <p className="editorial-kicker">Shorter time off</p>
                 <CardTitle className="mt-3 text-3xl">Manual time off</CardTitle>
                 <CardDescription className="mt-3">
-                  Use timed blocks for conferences, personal appointments, or admin
-                  sessions. Inputs are interpreted in {organization.timezone}.
+                  Use this when you are working that day, but unavailable for a few hours.
                 </CardDescription>
               </div>
 
@@ -274,7 +284,7 @@ export default async function AvailabilityPage() {
                   <Input
                     id="timeOffReason"
                     name="reason"
-                    placeholder="Conference, family time, admin block"
+                    placeholder="Appointment, lunch, errand"
                   />
                   <FieldError name="reason" />
                 </div>
@@ -316,7 +326,7 @@ export default async function AvailabilityPage() {
               ) : (
                 <EmptyState
                   className="bg-white/72"
-                  description="This is useful when you are open that day overall but unavailable for a specific stretch of time."
+                  description="Add time off here when you only need to block part of a day."
                   title="No timed absences yet"
                 />
               )}

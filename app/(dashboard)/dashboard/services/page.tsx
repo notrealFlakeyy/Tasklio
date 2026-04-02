@@ -4,7 +4,6 @@ import { FieldError } from "@/components/forms/field-error";
 import { FormNotice } from "@/components/forms/form-notice";
 import { SubmitButton } from "@/components/forms/submit-button";
 import { SpotlightPanel } from "@/components/ui/spotlight-panel";
-import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
@@ -16,10 +15,7 @@ import {
   deleteServiceAction,
   upsertServiceAction,
 } from "@/modules/services/actions";
-import {
-  getServicePerformanceSummary,
-  listServicesForOrganization,
-} from "@/modules/services/queries";
+import { listServicesForOrganization } from "@/modules/services/queries";
 
 function serviceStatusClassName(isActive: boolean) {
   return isActive
@@ -29,39 +25,22 @@ function serviceStatusClassName(isActive: boolean) {
 
 export default async function ServicesPage() {
   const { organization } = await requireDashboardContext();
-  const [services, performance] = await Promise.all([
-    listServicesForOrganization(organization.id),
-    getServicePerformanceSummary(organization.id),
-  ]);
-  const performanceByServiceId = new Map(
-    performance.map((item) => [item.serviceId, item]),
-  );
+  const services = await listServicesForOrganization(organization.id);
 
   const activeServices = services.filter((service) => service.is_active).length;
-  const totalBookedRevenue = performance.reduce(
-    (sum, item) => sum + item.bookedRevenueAmount,
-    0,
-  );
-  const totalCompletedRevenue = performance.reduce(
-    (sum, item) => sum + item.completedRevenueAmount,
-    0,
-  );
 
   return (
     <div className="space-y-6">
-      <section className="section-frame relative overflow-hidden rounded-[36px] border border-[color:var(--color-border)] bg-[linear-gradient(150deg,rgba(255,255,255,0.84),rgba(230,253,255,0.9))] px-7 py-8 shadow-[var(--shadow-soft)] md:px-10 md:py-10">
-        <div className="ambient-orb absolute right-0 top-2 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(234,247,207,0.94),transparent_72%)]" />
-        <div className="ambient-orb absolute bottom-0 left-8 h-40 w-40 rounded-full bg-[radial-gradient(circle,rgba(120,100,82,0.12),transparent_72%)]" />
-        <div className="relative grid gap-8 xl:grid-cols-[1.08fr,0.92fr]">
+      <Card className="px-7 py-8 md:px-10 md:py-10">
+        <div className="grid gap-8 xl:grid-cols-[1.08fr,0.92fr]">
           <div className="max-w-3xl">
             <p className="editorial-kicker">Service catalog</p>
             <h1 className="mt-4 text-4xl font-semibold tracking-tight md:text-5xl">
-              Package the work you sell with clearer structure and stronger signals.
+              Keep your services simple and clear.
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-8 text-[var(--color-muted)] md:text-lg">
-              Services define what customers can book, how long it takes, how much
-              it costs, and how much buffer your day needs. This screen turns that
-              catalog into something that feels operational, not merely editable.
+              Add what people can book, how long it takes, and what it costs. That is
+              enough to get your booking page working well.
             </p>
           </div>
 
@@ -81,44 +60,28 @@ export default async function ServicesPage() {
               </p>
               <CardTitle className="mt-3 text-3xl">{activeServices}</CardTitle>
               <CardDescription className="mt-2">
-                Services currently visible to booking flow logic.
+                Services currently visible on your booking page.
               </CardDescription>
             </Card>
-            <Card className="bg-white/74">
+            <Card className="bg-white/74 sm:col-span-2">
               <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
-                Booked revenue
+                Tip
               </p>
-              <CardTitle className="mt-3 text-3xl">
-                {formatCurrency(totalBookedRevenue)}
-              </CardTitle>
-              <CardDescription className="mt-2">
-                Revenue committed across active and completed bookings.
-              </CardDescription>
-            </Card>
-            <Card className="bg-white/74">
-              <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
-                Completed revenue
-              </p>
-              <CardTitle className="mt-3 text-3xl">
-                {formatCurrency(totalCompletedRevenue)}
-              </CardTitle>
-              <CardDescription className="mt-2">
-                Delivered revenue already earned from finished sessions.
+              <CardDescription className="mt-3">
+                Start with just a few clear services. You can always add more later.
               </CardDescription>
             </Card>
           </div>
         </div>
-      </section>
+      </Card>
 
       <div className="grid gap-6 xl:grid-cols-[0.86fr,1.14fr]">
         <SpotlightPanel className="p-6 md:p-8">
           <div>
             <p className="editorial-kicker">Create service</p>
-            <CardTitle className="mt-3 text-3xl">Add a new offer to the catalog.</CardTitle>
+            <CardTitle className="mt-3 text-3xl">Add a service.</CardTitle>
             <CardDescription className="mt-3 max-w-xl">
-              Keep service creation simple for the MVP, but still structured enough
-              to support future pricing rules, staff assignment, and plan-based
-              catalog limits.
+              Keep the name, price, and time clear. You can always come back and edit it.
             </CardDescription>
           </div>
 
@@ -143,7 +106,7 @@ export default async function ServicesPage() {
                   <Textarea
                     id="create-description"
                     name="description"
-                    placeholder="What is included, who it is for, and what the customer should expect?"
+                    placeholder="Optional short description shown on your booking page"
                   />
                   <FieldError name="description" />
                 </div>
@@ -167,7 +130,7 @@ export default async function ServicesPage() {
                   <FieldError name="durationMinutes" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="create-price">Price in minor units</Label>
+                  <Label htmlFor="create-price">Price</Label>
                   <Input
                     id="create-price"
                     name="priceAmount"
@@ -212,8 +175,7 @@ export default async function ServicesPage() {
                 Publish immediately
               </label>
               <p className="mt-3 text-sm leading-7 text-[var(--color-muted)]">
-                Price stays in minor units for correctness. A value of 7500 means
-                75.00 in the selected currency.
+                Price uses cents. Example: 7500 means 75.00 in the selected currency.
               </p>
             </div>
 
@@ -227,8 +189,6 @@ export default async function ServicesPage() {
         <div className="space-y-4">
           {services.length ? (
             services.map((service) => {
-              const servicePerformance = performanceByServiceId.get(service.id);
-
               return (
                 <SpotlightPanel className="p-6 md:p-7" key={service.id}>
                   <div className="flex flex-wrap items-start justify-between gap-4">
@@ -247,7 +207,7 @@ export default async function ServicesPage() {
 
                       <CardDescription className="max-w-2xl">
                         {service.description ??
-                          "No service description yet. Add one to make the public booking flow feel more informed and premium."}
+                          "No description added."}
                       </CardDescription>
 
                       <div className="grid gap-3 sm:grid-cols-3">
@@ -288,39 +248,6 @@ export default async function ServicesPage() {
                       title={`Delete ${service.name}?`}
                       triggerLabel="Delete"
                     />
-                  </div>
-
-                  <div className="mt-6 grid gap-3 md:grid-cols-3">
-                    <div className="rounded-[24px] border border-[color:var(--color-border)] bg-white/78 p-4">
-                      <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
-                        Bookings
-                      </p>
-                      <p className="mt-2 text-xl font-semibold">
-                        {servicePerformance?.totalBookings ?? 0}
-                      </p>
-                    </div>
-                    <div className="rounded-[24px] border border-[color:var(--color-border)] bg-white/78 p-4">
-                      <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
-                        Booked revenue
-                      </p>
-                      <p className="mt-2 text-xl font-semibold">
-                        {formatCurrency(
-                          servicePerformance?.bookedRevenueAmount ?? 0,
-                          service.currency,
-                        )}
-                      </p>
-                    </div>
-                    <div className="rounded-[24px] border border-[color:var(--color-border)] bg-white/78 p-4">
-                      <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-muted)]">
-                        Completed revenue
-                      </p>
-                      <p className="mt-2 text-xl font-semibold">
-                        {formatCurrency(
-                          servicePerformance?.completedRevenueAmount ?? 0,
-                          service.currency,
-                        )}
-                      </p>
-                    </div>
                   </div>
 
                   <ActionForm action={upsertServiceAction} className="mt-6 grid gap-4 md:grid-cols-2">
@@ -416,7 +343,7 @@ export default async function ServicesPage() {
             })
           ) : (
             <EmptyState
-              description="Create your first service to start shaping the public booking flow and revenue model for the business."
+              description="Create your first service so your booking page can start taking bookings."
               title="No services yet"
             />
           )}
